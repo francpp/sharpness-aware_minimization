@@ -31,8 +31,14 @@ if __name__ == "__main__":
 
     initialize(args, seed=42)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-    dataset = Cifar(args.batch_size, args.threads)
+    
+    # Choose the percentage of images to extract randomly from CIFAR10
+    # the subset extracted is balanced
+    percentage = 1
+    dataset = Cifar(percentage, args.batch_size, args.threads)
+    print('Training set: ', dataset.train_set.__len__())
+    print('Test set: ', dataset.test_set.__len__())
+    
     log = Log(log_each=10)
     model = WideResNet(args.depth, args.width_factor, args.dropout, in_channels=3, labels=10).to(device)
 
