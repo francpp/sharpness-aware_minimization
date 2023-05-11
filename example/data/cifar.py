@@ -73,7 +73,7 @@ class Cifar10Subset(Dataset):
 
 
 """
-the former code was:
+# the former code was:
 
 class Cifar:
     def __init__(self, batch_size, threads):
