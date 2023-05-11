@@ -1,13 +1,17 @@
 from utility.loading_bar import LoadingBar
 import time
+import os
+import pandas as pd
 
 
 class Log:
-    def __init__(self, log_each: int, initial_epoch=-1):
+    def __init__(self, log_each: int, optimizer: str, rho: int, initial_epoch=-1):
         self.loading_bar = LoadingBar(length=27)
         self.best_accuracy = 0.0
         self.log_each = log_each
         self.epoch = initial_epoch
+        self.log_list = []
+        self.log_list_filepath = os.path.join('.', 'my_train_' + optimizer + '_' + str(rho) + '.dat')
 
     def train(self, len_dataset: int) -> None:
         self.epoch += 1
@@ -19,6 +23,7 @@ class Log:
         self.is_train = True
         self.last_steps_state = {"loss": 0.0, "accuracy": 0.0, "steps": 0}
         self._reset(len_dataset)
+        
 
     def eval(self, len_dataset: int) -> None:
         self.flush()
@@ -50,7 +55,24 @@ class Log:
 
             if accuracy > self.best_accuracy:
                 self.best_accuracy = accuracy
+        
+        step_type = 'train' if self.is_train else 'test'
+        curr_epoch = self.epoch if self.is_train else self.epoch-1
+        summary_stats = {"step_type" : step_type, "loss" : loss, "accuracy" : accuracy, "epoch" : curr_epoch}
+        self.store(**summary_stats)
+        
+    def store(self, **kwargs):
+        """Write to file any optional arguments in json format."""
+        # update list log
+        self.log_list.append(kwargs)
 
+        # create series
+        s = pd.Series(kwargs)
+
+        # update log file
+        with open(self.log_list_filepath, 'a') as fs:
+            fs.write(s.to_json()+'\n')
+        
     def _train_step(self, model, loss, accuracy, learning_rate: float) -> None:
         self.learning_rate = learning_rate
         self.last_steps_state["loss"] += loss.sum().item()
