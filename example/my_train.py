@@ -5,7 +5,7 @@ from model.wide_res_net import WideResNet
 from model.smooth_cross_entropy import smooth_crossentropy
 from data.cifar import Cifar
 from utility.log import Log
-from utility.plots import *
+# from utility.plots import load_data, record_stats, plot_loss, plot_accuracy
 from utility.initialize import initialize
 from utility.step_lr import StepLR
 from utility.bypass_bn import enable_running_stats, disable_running_stats
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 optimizer.second_step(zero_grad=True)
             
             with torch.no_grad():
-                correct = torch.argmax(predictions.data, 1) == targets # torch.Size([128])
+                correct = predictions.max(dim=1).indices == targets # torch.Size([128])
                 log(model, loss.cpu(), correct.cpu(), scheduler.lr())
                 scheduler(epoch)
                 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
                 predictions = model(inputs)
                 loss = smooth_crossentropy(predictions, targets)
-                correct = torch.argmax(predictions, 1) == targets
+                correct = predictions.max(dim=1).indices == targets
                 log(model, loss.cpu(), correct.cpu())
         
     log.flush()

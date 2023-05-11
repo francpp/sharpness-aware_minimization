@@ -46,18 +46,25 @@ def record_stats(data):
             
 def plot_loss(epochs, losses_test):
 
-    plt.plot(epochs, losses_test)
-    plt.title('Test Loss')
-    plt.legend()
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.plot(epochs, losses_test)
+    ax.set_title('Test Loss', fontsize=14)
+    ax.set_xlabel('Epochs', fontsize=12)
+    ax.set_ylabel('Accuracy', fontsize=12)
+    ax.grid(True, linestyle='--', alpha=0.5)
+    # ax.legend(['Loss'], loc='lower right', fontsize=14)
     plt.show()
     
 def plot_accuracy(epochs, acc_test):
 
-    plt.plot(epochs, acc_test)
-    plt.title('Test Accuracy')
-    plt.legend()
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.plot(epochs, acc_test)
+    ax.set_title('Test Accuracy', fontsize=14)
+    ax.set_xlabel('Epochs', fontsize=12)
+    ax.set_ylabel('Accuracy', fontsize=12)
+    ax.grid(True, linestyle='--', alpha=0.5)
+    # ax.legend(['Accuracy'], loc='lower right', fontsize=14)
     plt.show()
-
 
 data = load_data('my_train_SGD_2.0.dat')
 _, loss, _, acc, epochs = record_stats(data)
