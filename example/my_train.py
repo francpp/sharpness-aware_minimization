@@ -5,6 +5,7 @@ from model.wide_res_net import WideResNet
 from model.smooth_cross_entropy import smooth_crossentropy
 from data.cifar import Cifar
 from utility.log import Log
+# from utility.plots import load_data, record_stats, plot_loss, plot_accuracy
 from utility.initialize import initialize
 from utility.step_lr import StepLR
 from utility.bypass_bn import enable_running_stats, disable_running_stats
@@ -15,7 +16,7 @@ from sam import SAM
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--adaptive", default=True, type=bool, help="True if you want to use the Adaptive SAM.")
+    parser.add_argument("--adaptive", default=False, type=bool, help="True if you want to use the Adaptive SAM.")
     parser.add_argument("--batch_size", default=128, type=int, help="Batch size used in the training and validation loop.")
     parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     print('Training set: ', dataset.train_set.__len__())
     print('Test set: ', dataset.test_set.__len__())
     
-    log = Log(log_each=10)
+    log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho)
     model = WideResNet(args.depth, args.width_factor, args.dropout, in_channels=3, labels=10).to(device)
     
     if args.optimizer == 'SGD':
@@ -64,7 +65,7 @@ if __name__ == "__main__":
             
             if args.optimizer == 'SGD':
                 predictions = model(inputs)
-                loss = smooth_crossentropy(predictions, targets, smoothing=args.label_smoothing)
+                loss = smooth_crossentropy(predictions, targets, smoothing=args.label_smoothing) # torch.Size([128])
                 loss.mean().backward()
                 optimizer.step()
                 optimizer.zero_grad()
@@ -81,12 +82,12 @@ if __name__ == "__main__":
                 disable_running_stats(model)
                 smooth_crossentropy(model(inputs), targets, smoothing=args.label_smoothing).mean().backward()
                 optimizer.second_step(zero_grad=True)
-
+            
             with torch.no_grad():
-                correct = torch.argmax(predictions.data, 1) == targets
+                correct = predictions.max(dim=1).indices == targets # torch.Size([128])
                 log(model, loss.cpu(), correct.cpu(), scheduler.lr())
                 scheduler(epoch)
-
+                
         model.eval()
         log.eval(len_dataset=len(dataset.test))
 
@@ -96,7 +97,8 @@ if __name__ == "__main__":
 
                 predictions = model(inputs)
                 loss = smooth_crossentropy(predictions, targets)
-                correct = torch.argmax(predictions, 1) == targets
+                correct = predictions.max(dim=1).indices == targets
                 log(model, loss.cpu(), correct.cpu())
-
+        
     log.flush()
+
