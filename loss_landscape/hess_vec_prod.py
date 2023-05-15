@@ -73,7 +73,7 @@ def eval_hess_vec_prod(vec, params, net, criterion, dataloader, use_cuda=False):
             inputs, targets = inputs.cuda(), targets.cuda()
 
         outputs = net(inputs)
-        loss = criterion(outputs, targets)
+        loss = criterion(outputs, targets).mean()
         grad_f = torch.autograd.grad(loss, inputs=params, create_graph=True)
 
         # Compute inner product of gradient with the direction vector
@@ -90,7 +90,7 @@ def eval_hess_vec_prod(vec, params, net, criterion, dataloader, use_cuda=False):
 ################################################################################
 #                  For computing Eigenvalues of Hessian
 ################################################################################
-def min_max_hessian_eigs(net, dataloader, criterion, rank=0, use_cuda=False, verbose=False):
+def min_max_hessian_eigs(net, dataloader, criterion, rank=0, use_cuda=False, verbose=True):
     """
         Compute the largest and the smallest eigenvalues of the Hessian marix.
 

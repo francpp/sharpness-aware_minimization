@@ -153,6 +153,8 @@ if __name__ == '__main__':
     parser.add_argument('--yignore', default='', help='ignore bias and BN parameters: biasbn')
     parser.add_argument('--idx', default=0, type=int, help='the index for the repeatness experiment')
     parser.add_argument('--surf_file', default='', help='customize the name of surface file, could be an existing file.')
+    parser.add_argument('--same_dir', default=False, help='')
+
 
     # plot parameters
     parser.add_argument('--show', action='store_true', default=False, help='show plotted figures')
