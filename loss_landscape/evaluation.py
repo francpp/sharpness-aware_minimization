@@ -40,13 +40,10 @@ def eval_loss(net, criterion, loader, loss_name, use_cuda=False):
                 # targets = Variable(targets)
                 if use_cuda:
                     inputs, targets = inputs.cuda(), targets.cuda()
-                print('Compute outputs')
                 outputs = net(inputs)
-                print('Compute loss')
                 loss = criterion(outputs, targets)
                 if loss_name == 'smooth_crossentropy':
                     loss = loss.mean()
-                print('ok')
                 total_loss += loss.item()*batch_size
                 _, predicted = torch.max(outputs.data, 1)
                 correct += predicted.eq(targets).sum().item()
