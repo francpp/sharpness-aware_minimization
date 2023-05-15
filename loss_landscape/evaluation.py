@@ -33,7 +33,6 @@ def eval_loss(net, criterion, loader, loss_name, use_cuda=False):
     with torch.no_grad():
         if loss_name == 'crossentropy' or loss_name == 'smooth_crossentropy':
             for batch_idx, (inputs, targets) in enumerate(loader):
-                print('Batch index',batch_idx)
                 batch_size = inputs.size(0)
                 total += batch_size
                 # inputs = Variable(inputs)

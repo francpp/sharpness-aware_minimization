@@ -24,6 +24,10 @@ import projection as proj
 import hess_vec_prod
 from plot_surface import name_surface_file, setup_surface_file
 
+import sys; sys.path.append("../example")
+from data.cifar import Cifar
+from model.smooth_cross_entropy import smooth_crossentropy
+
 
 def crunch_hessian_eigs(surf_file, net, w, s, d, dataloader, comm, rank, args):
     """
@@ -51,8 +55,12 @@ def crunch_hessian_eigs(surf_file, net, w, s, d, dataloader, comm, rank, args):
     inds, coords, inds_nums = scheduler.get_job_indices(max_eig, xcoordinates, ycoordinates, comm)
     print('Computing %d values for rank %d'% (len(inds), rank))
 
-    criterion = nn.CrossEntropyLoss() # set the loss function criteria
-
+    criterion = nn.CrossEntropyLoss()
+    if args.loss_name == 'mse':
+        criterion = nn.MSELoss()
+    if args.loss_name == 'smooth_crossentropy':
+        criterion = smooth_crossentropy
+        
     # Loop over all un-calculated coords
     start_time = time.time()
     total_sync = 0.0
@@ -113,9 +121,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='plotting loss surface')
     parser.add_argument('--mpi', '-m', action='store_true', help='use mpi')
     parser.add_argument('--cuda', '-c', action='store_true', help='use cuda')
-    parser.add_argument('--threads', default=2, type=int, help='number of threads')
+    # parser.add_argument('--threads', default=2, type=int, help='number of threads')
     parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use for each rank, useful for data parallel evaluation')
-    parser.add_argument('--batch_size', default=128, type=int, help='minibatch size')
+    # parser.add_argument('--batch_size', default=128, type=int, help='minibatch size')
 
     # data parameters
     parser.add_argument('--dataset', default='cifar10', help='cifar10 | imagenet')
@@ -150,6 +158,16 @@ if __name__ == '__main__':
     parser.add_argument('--show', action='store_true', default=False, help='show plotted figures')
     parser.add_argument('--plot', action='store_true', default=False, help='plot figures after computation')
 
+    # dataset loader parameters!!
+    parser.add_argument("--percentage", default=0.05, type=float, help="Percentage to extract from the Cifar Dataset")
+    parser.add_argument("--batch_size", default=128, type=int, help="Batch size used in the training and validation loop.")
+    parser.add_argument("--threads", default=2, type=int, help="Number of CPU threads for dataloaders.")
+    
+    # Model parameters
+    parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
+    parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
+    parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")    
+    
     args = parser.parse_args()
 
     torch.manual_seed(123)
@@ -187,7 +205,7 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     # Load models and extract parameters
     #--------------------------------------------------------------------------
-    net = model_loader.load(args.dataset, args.model, args.model_file)
+    net = model_loader.load(args.dataset, args.model, args.model_file, args)
     w = net_plotter.get_weights(net) # initial parameters
     s = copy.deepcopy(net.state_dict()) # deepcopy since state_dict are references
     if args.ngpu > 1:
@@ -220,14 +238,11 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     # download CIFAR10 if it does not exit
     if rank == 0 and args.dataset == 'cifar10':
-        torchvision.datasets.CIFAR10(root=args.dataset + '/data', train=True, download=True)
+        dataset = Cifar(args.percentage, args.batch_size, args.threads)
 
     mpi4pytorch.barrier(comm)
     
-    trainloader, testloader = dataloader.load_dataset(args.dataset, args.datapath,
-                                args.batch_size, args.threads, args.raw_data,
-                                args.data_split, args.split_idx,
-                                args.trainloader, args.testloader)
+    trainloader, testloader = dataset.train, dataset.test
 
     #--------------------------------------------------------------------------
     # Start the computation
