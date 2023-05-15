@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import time
 from torch.autograd.variable import Variable
 
-def eval_loss(net, criterion, loader, use_cuda=False):
+def eval_loss(net, criterion, loader, loss_name, use_cuda=False):
     """
     Evaluate the loss value for a given 'net' on the dataset provided by the loader.
 
@@ -31,21 +31,27 @@ def eval_loss(net, criterion, loader, use_cuda=False):
     net.eval()
 
     with torch.no_grad():
-        if isinstance(criterion, nn.CrossEntropyLoss):
+        if loss_name == 'crossentropy' or loss_name == 'smooth_crossentropy':
             for batch_idx, (inputs, targets) in enumerate(loader):
+                print('Batch index',batch_idx)
                 batch_size = inputs.size(0)
                 total += batch_size
-                inputs = Variable(inputs)
-                targets = Variable(targets)
+                # inputs = Variable(inputs)
+                # targets = Variable(targets)
                 if use_cuda:
                     inputs, targets = inputs.cuda(), targets.cuda()
+                print('Compute outputs')
                 outputs = net(inputs)
+                print('Compute loss')
                 loss = criterion(outputs, targets)
+                if loss_name == 'smooth_crossentropy':
+                    loss = loss.mean()
+                print('ok')
                 total_loss += loss.item()*batch_size
                 _, predicted = torch.max(outputs.data, 1)
                 correct += predicted.eq(targets).sum().item()
 
-        elif isinstance(criterion, nn.MSELoss):
+        elif loss_name == 'mse':
             for batch_idx, (inputs, targets) in enumerate(loader):
                 batch_size = inputs.size(0)
                 total += batch_size

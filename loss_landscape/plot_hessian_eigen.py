@@ -223,7 +223,7 @@ if __name__ == '__main__':
         torchvision.datasets.CIFAR10(root=args.dataset + '/data', train=True, download=True)
 
     mpi4pytorch.barrier(comm)
-
+    
     trainloader, testloader = dataloader.load_dataset(args.dataset, args.datapath,
                                 args.batch_size, args.threads, args.raw_data,
                                 args.data_split, args.split_idx,
