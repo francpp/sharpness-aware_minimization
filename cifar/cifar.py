@@ -5,7 +5,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset
 from random import randint
 
-from utility_cifar.cutout import Cutout
+from utilities_cifar.cutout import Cutout
 
 class Cifar:
     def __init__(self, percentage, batch_size, threads):

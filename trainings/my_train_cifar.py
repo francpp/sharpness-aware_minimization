@@ -8,11 +8,11 @@ from models.wide_res_net import WideResNet
 from models.smooth_cross_entropy import smooth_crossentropy
 from cifar.cifar import Cifar
 
-from utility_cifar.log import Log
+from utilities_cifar.log import Log
 # from utility.plots import load_data, record_stats, plot_loss, plot_accuracy
-from utility_cifar.initialize import initialize
-from utility_cifar.step_lr import StepLR
-from utility_cifar.bypass_bn import enable_running_stats, disable_running_stats
+from utilities_cifar.initialize import initialize
+from utilities_cifar.step_lr import StepLR
+from utilities_cifar.bypass_bn import enable_running_stats, disable_running_stats
 
 
 from sam import SAM
@@ -68,11 +68,9 @@ if __name__ == "__main__":
 
         for batch in dataset.train:
             inputs, targets = (b.to(device) for b in batch)
-            print('cifar targets: ', targets.shape) # shape: [batch_size]
             
             if args.optimizer == 'SGD':
                 predictions = model(inputs)
-                print('cifar predicitions: ', predictions.shape) # shape [batch_size, num_classes]
                 loss = smooth_crossentropy(predictions, targets, smoothing=args.label_smoothing) # torch.Size([batch_size])
                 loss.mean().backward()
                 optimizer.step()

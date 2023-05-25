@@ -65,6 +65,6 @@ class AttentionGru(nn.Module):
         # print('attention_weight: ', attention_weight.shape)
         output = self.dense(rescaled_hidden)
         # print('output: ', output.shape)
-        torch.nn.functional
+        # torch.nn.functional
 
         return output, attention_weight
