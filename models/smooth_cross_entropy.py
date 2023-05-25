@@ -11,3 +11,7 @@ def smooth_crossentropy(pred, gold, smoothing=0.1):
     log_prob = F.log_softmax(pred, dim=1)
 
     return F.kl_div(input=log_prob, target=one_hot, reduction='none').sum(-1)
+
+def mean_smooth_crossentropy(pred, gold, smoothing=0.1):
+    return smooth_crossentropy(pred, gold, smoothing).mean()
+
