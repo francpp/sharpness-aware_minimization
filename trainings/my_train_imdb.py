@@ -32,6 +32,10 @@ if __name__ == "__main__":
     parser.add_argument("--weight_decay", default=0.0005, type=float, help="L2 weight decay.")
     parser.add_argument("--percentage", default=0.05, type=float, help="Percentage to extract from the Imdb Dataset")
     parser.add_argument("--optimizer", default='SGD', type=str, help="SGD or SAM")
+    parser.add_argument("--embedding_dim", default=300, type=int, help="embedding dimension of the vocabulary")
+    parser.add_argument("--hidden_dim", default=32, type=int, help="hidden dimension of the GRU layer")
+    parser.add_argument("--output_dim", default=2, type=int, help="output dimension (number of classes)")
+    parser.add_argument("--num_layers", default=2, type=int, help="number of layers of the GRU layer")
     args = parser.parse_args()
 
     initialize(args, seed=42)
@@ -46,7 +50,7 @@ if __name__ == "__main__":
     # select the model
     ATTN_FLAG = True
     vocab_dim = len(dataset.TEXT.vocab)
-    model = AttentionGru(vocab_dim, embedding_dim=300, hidden_dim=32, output_dim=2, num_layers=2, d_rate=args.dropout)
+    model = AttentionGru(vocab_dim, embedding_dim=args.embedding_dim, hidden_dim=args.hidden_dim, output_dim=args.output_dim, num_layers=args.num_layers, d_rate=args.dropout)
     
     # initialize the logger
     log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho)
@@ -117,5 +121,5 @@ if __name__ == "__main__":
     
     state = {'acc': acc, 'state_dict': model.state_dict()}
          
-    torch.save(state, 'to_plot/model_imdb' + args.optimizer + '.pt')
+    torch.save(state, 'to_plot/model_imdb_' + args.optimizer + '.pt')
 

@@ -157,5 +157,5 @@ if __name__ == "__main__":
                 'state_dict': model.state_dict(),
             }
          
-    torch.save(state, 'model_acc_state_gcn.pt')
+    torch.save(state, 'to_plot/model_gcn_' + args.optimizer + '.pt')
 

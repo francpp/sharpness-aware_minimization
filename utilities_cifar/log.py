@@ -11,7 +11,7 @@ class Log:
         self.log_each = log_each
         self.epoch = initial_epoch
         self.log_list = []
-        self.log_list_filepath = os.path.join('.outputs/', 'my_train_cifar' + optimizer + '_' + str(rho) + '.dat')
+        self.log_list_filepath = os.path.join('outputs', 'my_train_cifar' + optimizer + '_' + str(rho) + '.dat')
 
     def train(self, len_dataset: int) -> None:
         self.epoch += 1
@@ -66,17 +66,9 @@ class Log:
             loss = self.epoch_state["loss"] / self.epoch_state["steps"]
             accuracy = self.epoch_state["accuracy"] / self.epoch_state["steps"]
 
-            print(
-                f"\r┃{self.epoch:12d}  ┃{loss:12.4f}  │{100*accuracy:10.2f} %  ┃{self.learning_rate:12.3e}  │{self._time():>12}  ┃",
-                end="",
-                flush=True,
-            )
-
         else:
             loss = self.epoch_state["loss"] / self.epoch_state["steps"]
             accuracy = self.epoch_state["accuracy"] / self.epoch_state["steps"]
-
-            print(f"{loss:12.4f}  │{100*accuracy:10.2f} %  ┃", flush=True)
 
             if accuracy > self.best_accuracy:
                 self.best_accuracy = accuracy
