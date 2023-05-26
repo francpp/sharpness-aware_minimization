@@ -222,9 +222,7 @@ if __name__ == '__main__':
     parser.add_argument("--width_factor", default=2, type=int, help="How many times wider compared to normal ResNet.")
     
     # Graph NN model parameters
-    parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
-    parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
-    parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")
+   
 
     # imdb model parameters
     # .........

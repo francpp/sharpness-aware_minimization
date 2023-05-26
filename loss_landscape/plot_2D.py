@@ -8,13 +8,16 @@ from matplotlib import cm
 import h5py
 import argparse
 import numpy as np
-from os.path import exists
+from os.path import exists, basename, normpath
 import seaborn as sns
 
 
 def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel=0.5, show=False):
     """Plot 2D contour map and 3D surface."""
-
+    
+    # plot_name = basename(normpath(surf_file))
+    plot_name = 'model_cifar_halfSAM_rho0.5_[-1.0,1.0,5]x[-1.0,1.0,5]'
+    
     f = h5py.File(surf_file, 'r')
     x = np.array(f['xcoordinates'][:])
     y = np.array(f['ycoordinates'][:])
@@ -45,14 +48,14 @@ def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel
     fig = plt.figure()
     CS = plt.contour(X, Y, Z, cmap='summer', levels=np.arange(vmin, vmax, vlevel))
     plt.clabel(CS, inline=1, fontsize=8)
-    fig.savefig(surf_file + '_' + surf_name + '_2dcontour' + '.pdf', dpi=300,
-                bbox_inches='tight', format='pdf')
+    print(plot_name)
+    fig.savefig(plot_name + '_' + surf_name + '_2dcontour' + '.png', dpi=300,
+                bbox_inches='tight', format='png')
 
     fig = plt.figure()
-    print(surf_file + '_' + surf_name + '_2dcontourf' + '.pdf')
     CS = plt.contourf(X, Y, Z, cmap='summer', levels=np.arange(vmin, vmax, vlevel))
-    fig.savefig(surf_file + '_' + surf_name + '_2dcontourf' + '.pdf', dpi=300,
-                bbox_inches='tight', format='pdf')
+    fig.savefig(plot_name + '_' + surf_name + '_2dcontourf' + '.png', dpi=300,
+                bbox_inches='tight', format='png')
 
     # --------------------------------------------------------------------
     # Plot 2D heatmaps
@@ -61,19 +64,29 @@ def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel
     sns_plot = sns.heatmap(Z, cmap='viridis', cbar=True, vmin=vmin, vmax=vmax,
                            xticklabels=False, yticklabels=False)
     sns_plot.invert_yaxis()
-    sns_plot.get_figure().savefig(surf_file + '_' + surf_name + '_2dheat.pdf',
-                                  dpi=300, bbox_inches='tight', format='pdf')
+    sns_plot.get_figure().savefig(plot_name + '_' + surf_name + '_2dheat.png',
+                                  dpi=300, bbox_inches='tight', format='png')
 
     # --------------------------------------------------------------------
     # Plot 3D surface
     # --------------------------------------------------------------------
-    fig = plt.figure()
-    ax = Axes3D(fig)
-    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    # fig = plt.figure()
+    # ax = Axes3D(fig)
+    # surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    # fig.colorbar(surf, shrink=0.5, aspect=5)
+    # # fig.savefig(surf_file + '_' + surf_name + '_3dsurface.pdf', dpi=300,
+    # #             bbox_inches='tight', format='pdf')
+    # fig.savefig(plot_name + '_' + surf_name + '_3dsurface.png', dpi=300,
+    #             bbox_inches='tight', format='png')
+    
+    
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,linewidth=0, antialiased=False)
     fig.colorbar(surf, shrink=0.5, aspect=5)
-    fig.savefig(surf_file + '_' + surf_name + '_3dsurface.pdf', dpi=300,
-                bbox_inches='tight', format='pdf')
-
+    fig.savefig(plot_name + '_' + surf_name + '_3dsurface.png', dpi=300,
+                bbox_inches='tight', format='png')
+    
+    
     f.close()
     if show: plt.show()
 

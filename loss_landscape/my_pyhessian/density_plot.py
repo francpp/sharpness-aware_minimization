@@ -34,7 +34,7 @@ def get_esd_plot(eigenvalues, weights, name='ex.png'):
     plt.title(f'Min eig={np.min(np.abs(eigenvalues)):.3e}, Max eig={np.max(np.abs(eigenvalues)):.2f}')
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
-    plt.axis([np.min(eigenvalues) - 1, np.max(eigenvalues) + 1, None, None])
+    plt.axis([np.min(eigenvalues) - 1, 231, None, None])
     plt.tight_layout()
     plt.savefig(name)
 
