@@ -12,7 +12,7 @@ from utilities_gcn.log import Log
 from utilities_gcn.initialize import initialize
 from utilities_gcn.step_lr import StepLR
 from utilities_gcn.bypass_bn import enable_running_stats, disable_running_stats
-
+from DatasetClass.TUD import GraphDataset
 
 from sam import SAM
 
@@ -39,8 +39,9 @@ if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     #################################### Import the dataset ##########################################
+    '''
     from torch_geometric.datasets import TUDataset
-
+    
     dataset = TUDataset(root='data/TUDataset', name='Mutagenicity')
 
     print()
@@ -78,10 +79,16 @@ if __name__ == "__main__":
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
+    '''
+    name='Mutagenicity'
+    Graphs = GraphDataset(name, args.train_rate, args.batch_size)
+    print(len(Graphs))
+    Graphs.GlobalStats()
+    Graphs.LocalStats()
     
     ########################### Import the model ####################################################
     from torchinfo import summary
-    model = GCN(args.hidden_channels, dataset.num_node_features, dataset.num_classes).to(device)
+    model = GCN(args.hidden_channels, Graphs.dataset.num_node_features, Graphs.dataset.num_classes).to(device)
     summary(model)
         
     log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho)
@@ -100,9 +107,9 @@ if __name__ == "__main__":
 
     for epoch in range(args.epochs):
         model.train()
-        log.train(len_dataset=len(train_dataset))
+        log.train(len_dataset=len(Graphs.train_dataset))
 
-        for data in train_loader:
+        for data in Graphs.train_loader:
             input_x = data.x.to(device)
             input_edge_index = data.edge_index.to(device)
             input_batch = data.batch.to(device)
@@ -135,10 +142,10 @@ if __name__ == "__main__":
                 scheduler(epoch)
                 
         model.eval()
-        log.eval(len_dataset=len(test_dataset))
+        log.eval(len_dataset=len(Graphs.test_dataset))
 
         with torch.no_grad():
-            for data in test_loader:
+            for data in Graphs.test_loader:
                 input_x = data.x.to(device)
                 input_edge_index = data.edge_index.to(device)
                 input_batch = data.batch.to(device)
@@ -157,5 +164,6 @@ if __name__ == "__main__":
                 'state_dict': model.state_dict(),
             }
          
-    torch.save(state, 'model_acc_state_gcn.pt')
+    #torch.save(state, 'model_acc_state_gcn.pt')
 
+    
