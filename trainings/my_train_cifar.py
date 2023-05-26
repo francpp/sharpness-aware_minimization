@@ -8,11 +8,11 @@ from models.wide_res_net import WideResNet
 from models.smooth_cross_entropy import smooth_crossentropy
 from cifar.cifar import Cifar
 
-from utility_cifar.log import Log
+from utilities_cifar.log import Log
 # from utility.plots import load_data, record_stats, plot_loss, plot_accuracy
-from utility_cifar.initialize import initialize
-from utility_cifar.step_lr import StepLR
-from utility_cifar.bypass_bn import enable_running_stats, disable_running_stats
+from utilities_cifar.initialize import initialize
+from utilities_cifar.step_lr import StepLR
+from utilities_cifar.bypass_bn import enable_running_stats, disable_running_stats
 
 
 from sam import SAM
@@ -22,16 +22,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--adaptive", default=False, type=bool, help="True if you want to use the Adaptive SAM.")
     parser.add_argument("--batch_size", default=128, type=int, help="Batch size used in the training and validation loop.")
-    parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
+    parser.add_argument("--depth", default=8, type=int, help="Number of layers.")
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
-    parser.add_argument("--epochs", default=200, type=int, help="Total number of epochs.")
+    parser.add_argument("--epochs", default=50, type=int, help="Total number of epochs.")
     parser.add_argument("--label_smoothing", default=0.1, type=float, help="Use 0.0 for no label smoothing.")
     parser.add_argument("--learning_rate", default=0.1, type=float, help="Base learning rate at the start of the training.")
     parser.add_argument("--momentum", default=0.9, type=float, help="SGD Momentum.")
     parser.add_argument("--threads", default=2, type=int, help="Number of CPU threads for dataloaders.")
-    parser.add_argument("--rho", default=2.0, type=int, help="Rho parameter for SAM.")
+    parser.add_argument("--rho", default=1, type=float, help="Rho parameter for SAM.")
     parser.add_argument("--weight_decay", default=0.0005, type=float, help="L2 weight decay.")
-    parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")
+    parser.add_argument("--width_factor", default=2, type=int, help="How many times wider compared to normal ResNet.")
     parser.add_argument("--percentage", default=0.05, type=float, help="Percentage to extract from the Cifar Dataset")
     parser.add_argument("--optimizer", default='SGD', type=str, help="SGD or SAM")
     args = parser.parse_args()
@@ -68,11 +68,9 @@ if __name__ == "__main__":
 
         for batch in dataset.train:
             inputs, targets = (b.to(device) for b in batch)
-            print('cifar targets: ', targets.shape) # shape: [batch_size]
             
             if args.optimizer == 'SGD':
                 predictions = model(inputs)
-                print('cifar predicitions: ', predictions.shape) # shape [batch_size, num_classes]
                 loss = smooth_crossentropy(predictions, targets, smoothing=args.label_smoothing) # torch.Size([batch_size])
                 loss.mean().backward()
                 optimizer.step()
@@ -108,13 +106,24 @@ if __name__ == "__main__":
                 correct = predictions.max(dim=1).indices == targets
                 log(model, loss.cpu(), correct.cpu())
         
+        if epoch==int(args.epochs/2) and args.optimizer=='SAM':  
+            acc = log.final__accuracy()
+            state_half = {
+                    'acc': acc,
+                    'state_dict': model.state_dict(),
+                }
+
+            torch.save(state_half, 'to_plot/model_cifar_half' + args.optimizer + '_rho' + str(args.rho) + '.pt')
+        
     log.flush()
-    acc = log.final_flush()
+    acc = log.final__accuracy()
     
     state = {
                 'acc': acc,
                 'state_dict': model.state_dict(),
             }
-         
-    torch.save(state, 'model_acc_state.pt')
+    if args.optimizer == 'SAM':
+        torch.save(state, 'to_plot/model_cifar_' + args.optimizer + '_rho' + str(args.rho) + '.pt')
+    if args.optimizer == 'SGD':
+        torch.save(state, 'to_plot/model_cifar_' + args.optimizer + '.pt')
 

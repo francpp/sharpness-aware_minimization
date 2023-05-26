@@ -24,9 +24,9 @@ import model_loader
 import scheduler
 import mpi4pytorch as mpi
 
-import sys; sys.path.append("../example")
-from data.cifar import Cifar
-from model.smooth_cross_entropy import smooth_crossentropy
+import sys; sys.path.append("..")
+from cifar.cifar import Cifar
+from models.smooth_cross_entropy import smooth_crossentropy
 
 
 def name_surface_file(args, dir_file):
@@ -172,7 +172,7 @@ if __name__ == '__main__':
     # parser.add_argument('--batch_size', default=128, type=int, help='minibatch size')
 
     # data parameters
-    parser.add_argument('--dataset', default='cifar10', help='cifar10 | imagenet')
+    parser.add_argument('--dataset', default='cifar10', help='cifar10 | imdb | ')
     parser.add_argument('--datapath', default='cifar10/data', metavar='DIR', help='path to the dataset')
     parser.add_argument('--raw_data', action='store_true', default=False, help='no data preprocessing')
     parser.add_argument('--data_split', default=1, type=int, help='the number of splits for the dataloader')
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     parser.add_argument('--testloader', default='', help='path to the testloader with random labels')
 
     # model parameters
-    parser.add_argument('--model', default='resnet56', help='model name')
+    parser.add_argument('--model', default='WideResNet', help='model name: WideResNet | AttentionGru | GCN')
     parser.add_argument('--model_folder', default='', help='the common folder that contains model_file and model_file2')
     parser.add_argument('--model_file', default='', help='path to the trained model file')
     parser.add_argument('--model_file2', default='', help='use (model_file2 - model_file) as the xdirection')
@@ -212,15 +212,22 @@ if __name__ == '__main__':
     parser.add_argument('--plot', action='store_true', default=False, help='plot figures after computation')
     
     # dataset loader parameters!!
-    parser.add_argument("--percentage", default=0.05, type=float, help="Percentage to extract from the Cifar Dataset")
+    parser.add_argument("--percentage", default=0.3, type=float, help="Percentage to extract from the Cifar Dataset")
     parser.add_argument("--batch_size", default=128, type=int, help="Batch size used in the training and validation loop.")
     parser.add_argument("--threads", default=2, type=int, help="Number of CPU threads for dataloaders.")
     
-    # Model parameters
+    # Cifar10 model parameters
+    parser.add_argument("--depth", default=8, type=int, help="Number of layers.")
+    parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
+    parser.add_argument("--width_factor", default=2, type=int, help="How many times wider compared to normal ResNet.")
+    
+    # Graph NN model parameters
     parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
     parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")
 
+    # imdb model parameters
+    # .........
     args = parser.parse_args()
 
     torch.manual_seed(123)
@@ -290,8 +297,11 @@ if __name__ == '__main__':
     # Setup dataloader
     #--------------------------------------------------------------------------
     # download CIFAR10 if it does not exit
-    if rank == 0 and args.dataset == 'cifar10':
-        dataset = Cifar(args.percentage, args.batch_size, args.threads)
+    if rank == 0:
+        if args.dataset == 'cifar10':
+            dataset = Cifar(args.percentage, args.batch_size, args.threads)
+        elif args.dataset == 'imdb':
+            dataset = ...
 
     mpi.barrier(comm)
 

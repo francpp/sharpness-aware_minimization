@@ -66,7 +66,10 @@ def crunch_hessian_eigs(surf_file, net, w, s, d, dataloader, comm, rank, args):
     total_sync = 0.0
 
     for count, ind in enumerate(inds):
-         # Get the coordinates of the points being calculated
+        # print("rank: %d %d/%d  (%0.2f%%)  %d" % ( \
+        #     rank, count + 1, len(inds), 100.0 * (count + 1)/len(inds), ind))
+        
+        # Get the coordinates of the points being calculated
         coord = coords[count]
 
         # Load the weights corresponding to those coordinates into the net
@@ -161,14 +164,14 @@ if __name__ == '__main__':
     parser.add_argument('--plot', action='store_true', default=False, help='plot figures after computation')
 
     # dataset loader parameters!!
-    parser.add_argument("--percentage", default=0.05, type=float, help="Percentage to extract from the Cifar Dataset")
+    parser.add_argument("--percentage", default=0.3, type=float, help="Percentage to extract from the Cifar Dataset")
     parser.add_argument("--batch_size", default=128, type=int, help="Batch size used in the training and validation loop.")
     parser.add_argument("--threads", default=2, type=int, help="Number of CPU threads for dataloaders.")
     
     # Model parameters
-    parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
+    parser.add_argument("--depth", default=8, type=int, help="Number of layers.")
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
-    parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")    
+    parser.add_argument("--width_factor", default=2, type=int, help="How many times wider compared to normal ResNet.")    
     
     args = parser.parse_args()
 
