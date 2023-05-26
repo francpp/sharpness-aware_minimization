@@ -5,13 +5,13 @@ import pandas as pd
 
 
 class Log:
-    def __init__(self, log_each: int, optimizer: str, rho: int, initial_epoch=-1):
+    def __init__(self, log_each: int, optimizer: str, rho: int, test_case: str, initial_epoch=-1):
         self.loading_bar = LoadingBar(length=27)
         self.best_accuracy = 0.0
         self.log_each = log_each
         self.epoch = initial_epoch
         self.log_list = []
-        self.log_list_filepath = os.path.join('outputs', 'my_train_cifar' + optimizer + '_' + str(rho) + '.dat')
+        self.log_list_filepath = os.path.join('outputs', 'my_train_'+ test_case + '_' + optimizer + '_' + str(rho) + '.dat')
 
     def train(self, len_dataset: int) -> None:
         self.epoch += 1

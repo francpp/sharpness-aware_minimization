@@ -5,7 +5,7 @@ from torch_geometric.loader import DataLoader
 class GraphDataset:
     def __init__(self, name, train_rate, batch_size):
         torch.manual_seed(12345)
-        self.dataset = TUDataset(root='data/TUDataset', name=name).shuffle()
+        self.dataset = TUDataset(root='DatasetClass/TUDataset', name=name).shuffle()
         self.batch_size = batch_size
         self.size_train = int(len(self.dataset)*train_rate/100)
         self.train_dataset = self.dataset[:self.size_train]

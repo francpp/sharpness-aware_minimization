@@ -6,14 +6,14 @@ sys.path.append(".")
 
 from models.attention_gru import AttentionGru
 from models.smooth_cross_entropy import smooth_crossentropy
-from imdb.imdb import Imdb
+from DatasetClass.imdb import Imdb
 
-from utilities_imdb.log import Log
-from utilities_imdb.initialize import initialize
-from utilities_imdb.step_lr import StepLR
-from utilities_imdb.bypass_bn import enable_running_stats, disable_running_stats
+from utilities_cifar.log import Log
+from utilities_cifar.initialize import initialize
+from utilities_cifar.step_lr import StepLR
+from utilities_cifar.bypass_bn import enable_running_stats, disable_running_stats
 
-from utilities_imdb.helpers import *
+from utilities_cifar.helpers import *
 
 from sam import SAM
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     model = AttentionGru(vocab_dim, embedding_dim=args.embedding_dim, hidden_dim=args.hidden_dim, output_dim=args.output_dim, num_layers=args.num_layers, d_rate=args.dropout)
     
     # initialize the logger
-    log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho)
+    log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho, test_case = 'imdb')
     
     # select the optimizer
     if args.optimizer == 'SGD':
@@ -116,10 +116,24 @@ if __name__ == "__main__":
                 correct = predictions.max(dim=1).indices == targets
                 log(model, loss.cpu(), correct.cpu())
         
+        if epoch==int(args.epochs/2) and args.optimizer=='SAM':  
+            acc = log.final__accuracy()
+            state_half = {
+                    'acc': acc,
+                    'state_dict': model.state_dict(),
+                }
+
+            torch.save(state_half, 'to_plot/model_imdb_half_' + args.optimizer + '_rho' + str(args.rho) + '.pt')
+        
     log.flush()
-    acc = log.final_flush()
+    acc = log.final__accuracy()
     
-    state = {'acc': acc, 'state_dict': model.state_dict()}
-         
-    torch.save(state, 'to_plot/model_imdb_' + args.optimizer + '.pt')
+    state = {
+                'acc': acc,
+                'state_dict': model.state_dict(),
+            }
+    if args.optimizer == 'SAM':
+        torch.save(state, 'to_plot/model_imdb_' + args.optimizer + '_rho' + str(args.rho) + '.pt')
+    if args.optimizer == 'SGD':
+        torch.save(state, 'to_plot/model_imdb_' + args.optimizer + '.pt')
 

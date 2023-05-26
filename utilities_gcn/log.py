@@ -11,7 +11,7 @@ class Log:
         self.log_each = log_each
         self.epoch = initial_epoch
         self.log_list = []
-        self.log_list_filepath = os.path.join('.', 'my_train_GCN' + optimizer + '_' + str(rho) + '.dat')
+        self.log_list_filepath = os.path.join('outputs', 'my_train_GCN_' + optimizer + '_' + str(rho) + '.dat')
 
     def train(self, len_dataset: int) -> None:
         self.epoch += 1

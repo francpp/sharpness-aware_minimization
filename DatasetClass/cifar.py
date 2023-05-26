@@ -5,7 +5,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset
 from random import randint
 
-from utility_cifar.cutout import Cutout
+from utilities_cifar.cutout import Cutout
 
 class Cifar:
     def __init__(self, percentage, batch_size, threads):
@@ -24,8 +24,8 @@ class Cifar:
             transforms.Normalize(mean, std)
         ])
 
-        self.train_set = Cifar10Subset(percentage=percentage, root='./cifar', train=True, transform=train_transform)
-        self.test_set = Cifar10Subset(percentage=percentage, root='./cifar', train=False, transform=test_transform)
+        self.train_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=True, transform=train_transform)
+        self.test_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=False, transform=test_transform)
         
         self.train = torch.utils.data.DataLoader(self.train_set, batch_size=batch_size, shuffle=True, num_workers=threads)
         self.test = torch.utils.data.DataLoader(self.test_set, batch_size=batch_size, shuffle=False, num_workers=threads)
@@ -33,7 +33,7 @@ class Cifar:
         self.classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
     def _get_statistics(self):
-        train_set = datasets.CIFAR10(root='./cifar', train=True, download=True, transform=transforms.ToTensor())
+        train_set = datasets.CIFAR10(root='./DatasetClass/cifar', train=True, download=True, transform=transforms.ToTensor())
 
         data = torch.cat([d[0] for d in DataLoader(train_set)])
         return data.mean(dim=[0, 2, 3]), data.std(dim=[0, 2, 3])

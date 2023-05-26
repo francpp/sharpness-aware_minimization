@@ -1,4 +1,4 @@
-from utilities_cifar.loading_bar import LoadingBar
+from utilities_imdb.loading_bar import LoadingBar
 import time
 import os
 import pandas as pd
@@ -11,7 +11,7 @@ class Log:
         self.log_each = log_each
         self.epoch = initial_epoch
         self.log_list = []
-        self.log_list_filepath = os.path.join('outputs', 'my_train_imdb' + optimizer + '_' + str(rho) + '.dat')
+        self.log_list_filepath = os.path.join('outputs', 'my_train_imdb_' + optimizer + '_' + str(rho) + '.dat')
 
     def train(self, len_dataset: int) -> None:
         self.epoch += 1

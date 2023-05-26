@@ -7,7 +7,7 @@ from torchtext import data, datasets
 from torch.utils.data import DataLoader, Dataset
 import random
 
-from utilities_imdb.cutout import Cutout
+from utilities_cifar.cutout import Cutout
 
 def split_train_valid_and_select(train_data, percentage):
     # split train and validation set, and select a given percentage
@@ -33,7 +33,7 @@ def split_train_valid_and_select(train_data, percentage):
 
 class Imdb:
     def __init__(self, percentage, batch_size, threads, device):
-        dataset = ImdbSubset(percentage=percentage, batch_size=batch_size, root='./imdb', seed=42, device=device)
+        dataset = ImdbSubset(percentage=percentage, batch_size=batch_size, root='./DatasetClass/imdb', seed=42, device=device)
 
         self.train_set = dataset.train_data
         self.valid_set = dataset.valid_data
@@ -48,16 +48,6 @@ class Imdb:
                                                                         (self.train_set, self.valid_set, self.test_set), 
                                                                         batch_size=batch_size, 
                                                                         device=device)    
-        
-    """
-    def _get_statistics(self, device):
-        train_iterator_stats, _, _ = data.BucketIterator.splits(
-                                        (self.train_set, self.valid_set, self.test_set), 
-                                        batch_size=1, 
-                                        device=device)        
-        data_stats = torch.cat([d for d in train_iterator_stats])
-        return data_stats.mean(dim=[0, 2, 3]), data_stats.std(dim=[0, 2, 3])
-    """
 
 
 class ImdbSubset(Dataset):
@@ -72,12 +62,6 @@ class ImdbSubset(Dataset):
 
         self.train_data, self.test_data = datasets.IMDB.splits(self.TEXT, self.LABEL)
         self.train_data, self.valid_data = self.train_data.split(random_state=random.seed(seed))
-        
-        """
-        train_idx, valid_idx = split_train_valid_and_select(train_data, percentage)
-        train_data = datasets.Subset(train_data,  train_idx)
-        valid_data = datasets.Subset(train_data,  valid_idx)
-        """
 
         self.TEXT.build_vocab(self.train_data, max_size=len(self.train_data), vectors="glove.6B.300d")
         self.LABEL.build_vocab(self.train_data)

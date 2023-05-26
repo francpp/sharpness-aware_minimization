@@ -6,7 +6,7 @@ sys.path.append(".")
 
 from models.wide_res_net import WideResNet
 from models.smooth_cross_entropy import smooth_crossentropy
-from cifar.cifar import Cifar
+from DatasetClass.cifar import Cifar
 
 from utilities_cifar.log import Log
 # from utility.plots import load_data, record_stats, plot_loss, plot_accuracy
@@ -113,7 +113,7 @@ if __name__ == "__main__":
                     'state_dict': model.state_dict(),
                 }
 
-            torch.save(state_half, 'to_plot/model_cifar_half' + args.optimizer + '_rho' + str(args.rho) + '.pt')
+            torch.save(state_half, 'to_plot/model_cifar_half_' + args.optimizer + '_rho' + str(args.rho) + '.pt')
         
     log.flush()
     acc = log.final__accuracy()

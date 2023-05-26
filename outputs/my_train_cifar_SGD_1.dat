@@ -1,0 +1,12 @@
+{"step_type":"train","loss":1.7589651184,"accuracy":0.084,"epoch":0}
+{"step_type":"test","loss":1.7446385193,"accuracy":0.1,"epoch":0}
+{"step_type":"train","loss":1.7333710632,"accuracy":0.138,"epoch":1}
+{"step_type":"test","loss":1.7286772156,"accuracy":0.07,"epoch":0}
+{"step_type":"train","loss":1.7589651184,"accuracy":0.084,"epoch":0}
+{"step_type":"test","loss":1.7446385193,"accuracy":0.1,"epoch":0}
+{"step_type":"train","loss":1.7333710632,"accuracy":0.138,"epoch":1}
+{"step_type":"test","loss":1.7286772156,"accuracy":0.07,"epoch":0}
+{"step_type":"train","loss":1.7589651184,"accuracy":0.084,"epoch":0}
+{"step_type":"test","loss":1.7446385193,"accuracy":0.1,"epoch":0}
+{"step_type":"train","loss":1.7333710632,"accuracy":0.138,"epoch":1}
+{"step_type":"test","loss":1.7286772156,"accuracy":0.07,"epoch":0}

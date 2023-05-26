@@ -1,0 +1,9 @@
+{"step_type":"train","loss":0.4603311356,"accuracy":0.5749588138,"epoch":0}
+{"step_type":"test","loss":0.3276050263,"accuracy":0.6351766513,"epoch":0}
+{"step_type":"train","loss":0.2976147011,"accuracy":0.7024711697,"epoch":1}
+{"step_type":"test","loss":0.2956670125,"accuracy":0.7119815668,"epoch":0}
+{"step_type":"test","loss":0.2956670125,"accuracy":0.7119815668,"epoch":0}
+{"step_type":"train","loss":0.4603311243,"accuracy":0.5749588138,"epoch":0}
+{"step_type":"test","loss":0.3276050131,"accuracy":0.6351766513,"epoch":0}
+{"step_type":"train","loss":0.2976103841,"accuracy":0.7024711697,"epoch":1}
+{"step_type":"test","loss":0.2956153684,"accuracy":0.7135176651,"epoch":0}
