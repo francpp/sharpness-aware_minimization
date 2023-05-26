@@ -106,13 +106,24 @@ if __name__ == "__main__":
                 correct = predictions.max(dim=1).indices == targets
                 log(model, loss.cpu(), correct.cpu())
         
+        if epoch==int(args.epochs/2) and args.optimizer=='SAM':  
+            acc = log.final__accuracy()
+            state_half = {
+                    'acc': acc,
+                    'state_dict': model.state_dict(),
+                }
+
+            torch.save(state_half, 'to_plot/model_cifar_half' + args.optimizer + '_rho' + str(args.rho) + '.pt')
+        
     log.flush()
-    acc = log.final_flush()
+    acc = log.final__accuracy()
     
     state = {
                 'acc': acc,
                 'state_dict': model.state_dict(),
             }
-         
-    torch.save(state, 'to_plot/model_cifar_' + args.optimizer + '.pt')
+    if args.optimizer == 'SAM':
+        torch.save(state, 'to_plot/model_cifar_' + args.optimizer + '_rho' + str(args.rho) + '.pt')
+    if args.optimizer == 'SGD':
+        torch.save(state, 'to_plot/model_cifar_' + args.optimizer + '.pt')
 

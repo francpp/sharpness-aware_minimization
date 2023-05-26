@@ -98,4 +98,3 @@
 {"step_type":"test","loss":0.4822277298,"accuracy":0.813,"epoch":48}
 {"step_type":"train","loss":0.3918225269,"accuracy":0.8508666667,"epoch":49}
 {"step_type":"test","loss":0.4844513054,"accuracy":0.8116666667,"epoch":48}
-{"step_type":"test","loss":0.4844513054,"accuracy":0.8116666667,"epoch":48}

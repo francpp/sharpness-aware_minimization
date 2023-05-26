@@ -61,7 +61,7 @@ class Log:
         summary_stats = {"step_type" : step_type, "loss" : loss, "accuracy" : accuracy, "epoch" : curr_epoch}
         self.store(**summary_stats)
         
-    def final_flush(self) -> None:
+    def final__accuracy(self) -> None:
         if self.is_train:
             loss = self.epoch_state["loss"] / self.epoch_state["steps"]
             accuracy = self.epoch_state["accuracy"] / self.epoch_state["steps"]
@@ -72,11 +72,6 @@ class Log:
 
             if accuracy > self.best_accuracy:
                 self.best_accuracy = accuracy
-        
-        step_type = 'train' if self.is_train else 'test'
-        curr_epoch = self.epoch if self.is_train else self.epoch-1
-        summary_stats = {"step_type" : step_type, "loss" : loss, "accuracy" : accuracy, "epoch" : curr_epoch}
-        self.store(**summary_stats)
         
         return accuracy
         
