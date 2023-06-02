@@ -9,14 +9,19 @@ import h5py
 import argparse
 import numpy as np
 from os.path import exists, basename, normpath
+from os import makedirs
 import seaborn as sns
 
 
 def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel=0.5, show=False):
     """Plot 2D contour map and 3D surface."""
     
-    # plot_name = basename(normpath(surf_file))
-    plot_name = 'model_cifar_halfSAM_rho0.5_[-1.0,1.0,5]x[-1.0,1.0,5]'
+    plot_name = basename(normpath(surf_file))
+    folder = 'plots/'
+    if not exists(folder):
+        # If it doesn't exist, create it
+        makedirs(folder)
+    plot_name = folder+plot_name
     
     f = h5py.File(surf_file, 'r')
     x = np.array(f['xcoordinates'][:])
@@ -33,9 +38,9 @@ def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel
     print('------------------------------------------------------------------')
     print('plot_2d_contour')
     print('------------------------------------------------------------------')
-    print("loading surface file: " + surf_file)
+    # print("loading surface file: " + surf_file)
     print('len(xcoordinates): %d   len(ycoordinates): %d' % (len(x), len(y)))
-    print('max(%s) = %f \t min(%s) = %f' % (surf_name, np.max(Z), surf_name, np.min(Z)))
+    # print('max(%s) = %f \t min(%s) = %f' % (surf_name, np.max(Z), surf_name, np.min(Z)))
     print(Z)
 
     if (len(x) <= 1 or len(y) <= 1):
@@ -48,13 +53,12 @@ def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel
     fig = plt.figure()
     CS = plt.contour(X, Y, Z, cmap='summer', levels=np.arange(vmin, vmax, vlevel))
     plt.clabel(CS, inline=1, fontsize=8)
-    print(plot_name)
-    fig.savefig(plot_name + '_' + surf_name + '_2dcontour' + '.png', dpi=300,
+    fig.savefig(plot_name + '_2dcontour' + '.png', dpi=300,
                 bbox_inches='tight', format='png')
 
     fig = plt.figure()
     CS = plt.contourf(X, Y, Z, cmap='summer', levels=np.arange(vmin, vmax, vlevel))
-    fig.savefig(plot_name + '_' + surf_name + '_2dcontourf' + '.png', dpi=300,
+    fig.savefig(plot_name  + '_2dcontourf' + '.png', dpi=300,
                 bbox_inches='tight', format='png')
 
     # --------------------------------------------------------------------
@@ -64,7 +68,7 @@ def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel
     sns_plot = sns.heatmap(Z, cmap='viridis', cbar=True, vmin=vmin, vmax=vmax,
                            xticklabels=False, yticklabels=False)
     sns_plot.invert_yaxis()
-    sns_plot.get_figure().savefig(plot_name + '_' + surf_name + '_2dheat.png',
+    sns_plot.get_figure().savefig(plot_name + '_2dheat.png',
                                   dpi=300, bbox_inches='tight', format='png')
 
     # --------------------------------------------------------------------
@@ -83,7 +87,7 @@ def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,linewidth=0, antialiased=False)
     fig.colorbar(surf, shrink=0.5, aspect=5)
-    fig.savefig(plot_name + '_' + surf_name + '_3dsurface.png', dpi=300,
+    fig.savefig(plot_name + '_3dsurface.png', dpi=300,
                 bbox_inches='tight', format='png')
     
     

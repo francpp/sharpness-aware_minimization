@@ -24,9 +24,14 @@ import model_loader
 import scheduler
 import mpi4pytorch as mpi
 
+from evaluate_loss import *
+
 import sys; sys.path.append("..")
-from cifar.cifar import Cifar
-from models.smooth_cross_entropy import smooth_crossentropy
+from DatasetClass.cifar import Cifar
+from DatasetClass.imdb import Imdb
+from DatasetClass.TUD import GraphDataset
+
+from models.smooth_cross_entropy import smooth_crossentropy,mean_smooth_crossentropy
 
 
 def name_surface_file(args, dir_file):
@@ -75,7 +80,7 @@ def setup_surface_file(args, surf_file, dir_file):
     return surf_file
 
 
-def crunch(surf_file, net, w, s, d, dataloader, loss_key, acc_key, comm, rank, args):
+def crunch(model_name, surf_file, net, w, s, d, dataloader, loss_key, acc_key, comm, rank, args):
     """
         Calculate the loss values and accuracies of modified models in parallel
         using MPI reduce.
@@ -125,7 +130,12 @@ def crunch(surf_file, net, w, s, d, dataloader, loss_key, acc_key, comm, rank, a
 
         # Record the time to compute the loss value
         loss_start = time.time()
-        loss, acc = evaluation.eval_loss(net, criterion, dataloader, args.loss_name, args.cuda)
+        if model_name == 'WideResNet':
+            loss, acc = evaluation.eval_loss(net, criterion, dataloader, args.loss_name, args.cuda)
+        elif model_name == 'AttentionGru':
+            loss, acc = eval_loss_attgru(net,criterion,dataloader,args.percentage)
+        elif model_name == 'GCN':
+            loss, acc = eval_loss_gcn(net,criterion,dataloader)
         loss_compute_time = time.time() - loss_start
 
         # Record the result in the local array
@@ -172,7 +182,7 @@ if __name__ == '__main__':
     # parser.add_argument('--batch_size', default=128, type=int, help='minibatch size')
 
     # data parameters
-    parser.add_argument('--dataset', default='cifar10', help='cifar10 | imdb | ')
+    parser.add_argument('--dataset', default='cifar10', help='cifar10 | imdb | Mutagenicity')
     parser.add_argument('--datapath', default='cifar10/data', metavar='DIR', help='path to the dataset')
     parser.add_argument('--raw_data', action='store_true', default=False, help='no data preprocessing')
     parser.add_argument('--data_split', default=1, type=int, help='the number of splits for the dataloader')
@@ -221,11 +231,16 @@ if __name__ == '__main__':
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
     parser.add_argument("--width_factor", default=2, type=int, help="How many times wider compared to normal ResNet.")
     
-    # Graph NN model parameters
-   
+    # GCN model parameters
+    parser.add_argument("--train_rate", default=70, type=int, help="Train rate, [0,100]")
+    parser.add_argument("--hidden-channels", default=64, type=int, help="Hidden channels of convolutional layers")
+    
+    # Attention GRU model parameters
+    parser.add_argument("--embedding_dim", default=300, type=int, help="embedding dimension of the vocabulary")
+    parser.add_argument("--hidden_dim", default=32, type=int, help="hidden dimension of the GRU layer")
+    parser.add_argument("--output_dim", default=2, type=int, help="output dimension (number of classes)")
+    parser.add_argument("--num_layers", default=2, type=int, help="number of layers of the GRU layer")
 
-    # imdb model parameters
-    # .........
     args = parser.parse_args()
 
     torch.manual_seed(123)
@@ -259,11 +274,35 @@ if __name__ == '__main__':
             'You specified some arguments for the y axis, but not all'
     except:
         raise Exception('Improper format for x- or y-coordinates. Try something like -1:1:51')
+    
+    
+    #--------------------------------------------------------------------------
+    # Setup dataloader
+    #--------------------------------------------------------------------------
+    if rank == 0:
+        if args.dataset == 'cifar10':
+            dataset = Cifar(args.percentage, args.batch_size, args.threads)
+            trainloader, testloader = dataset.train, dataset.test
+        
+        elif args.dataset == 'imdb':
+            try:
+                device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+            except:
+                device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+            dataset = Imdb(args.percentage, args.batch_size, args.threads, device)
+            trainloader = dataset.train_iterator
+
+        elif args.dataset == 'Mutagenicity':
+            dataset = GraphDataset(args.dataset, args.train_rate, args.batch_size)
+            trainloader = dataset.train_loader
+    
+    mpi.barrier(comm)
 
     #--------------------------------------------------------------------------
     # Load models and extract parameters
     #--------------------------------------------------------------------------
-    net = model_loader.load(args.dataset, args.model, args.model_file, args)
+    net = model_loader.load(args.dataset, args.model, args.model_file, args, DATASET = dataset)
     w = net_plotter.get_weights(net) # initial parameters
     s = copy.deepcopy(net.state_dict()) # deepcopy since state_dict are references
     if args.ngpu > 1:
@@ -291,33 +330,25 @@ if __name__ == '__main__':
         similarity = proj.cal_angle(proj.nplist_to_tensor(d[0]), proj.nplist_to_tensor(d[1]))
         print('cosine similarity between x-axis and y-axis: %f' % similarity)
 
-    #--------------------------------------------------------------------------
-    # Setup dataloader
-    #--------------------------------------------------------------------------
-    # download CIFAR10 if it does not exit
-    if rank == 0:
-        if args.dataset == 'cifar10':
-            dataset = Cifar(args.percentage, args.batch_size, args.threads)
-        elif args.dataset == 'imdb':
-            dataset = ...
+    
 
     mpi.barrier(comm)
 
-    trainloader, testloader = dataset.train, dataset.test
+    
 
     #--------------------------------------------------------------------------
     # Start the computation
     #--------------------------------------------------------------------------
-    crunch(surf_file, net, w, s, d, trainloader, 'train_loss', 'train_acc', comm, rank, args)
+    crunch(args.model, surf_file, net, w, s, d, trainloader, 'train_loss', 'train_acc', comm, rank, args)
     # crunch(surf_file, net, w, s, d, testloader, 'test_loss', 'test_acc', comm, rank, args)
 
     #--------------------------------------------------------------------------
     # Plot figures
     #--------------------------------------------------------------------------
-    if args.plot and rank == 0:
-        if args.y and args.proj_file:
-            plot_2D.plot_contour_trajectory(surf_file, dir_file, args.proj_file, 'train_loss', args.show)
-        elif args.y:
-            plot_2D.plot_2d_contour(surf_file, 'train_loss', args.vmin, args.vmax, args.vlevel, args.show)
-        else:
-            plot_1D.plot_1d_loss_err(surf_file, args.xmin, args.xmax, args.loss_max, args.log, args.show)
+    # if args.plot and rank == 0:
+    #     if args.y and args.proj_file:
+    #         plot_2D.plot_contour_trajectory(surf_file, dir_file, args.proj_file, 'train_loss', args.show)
+    #     elif args.y:
+    #         plot_2D.plot_2d_contour(surf_file, 'train_loss', args.vmin, args.vmax, args.vlevel, args.show)
+    #     else:
+    #         plot_1D.plot_1d_loss_err(surf_file, args.xmin, args.xmax, args.loss_max, args.log, args.show)

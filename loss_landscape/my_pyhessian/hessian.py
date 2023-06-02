@@ -34,7 +34,7 @@ class hessian():
         iii) the estimated eigenvalue density
     """
 
-    def __init__(self, model, criterion, data=None, dataloader=None, cuda=True):
+    def __init__(self, model, criterion, data=None, dataloader=None, cuda=True, model_name=None):
         """
         model: the model that needs Hessain information
         criterion: the loss function
@@ -48,6 +48,7 @@ class hessian():
 
         self.model = model.eval()  # make model is in evaluation model
         self.criterion = criterion
+        self.model_name = model_name
 
         if data != None:
             self.data = data
@@ -69,9 +70,24 @@ class hessian():
                 ), self.targets.cuda()
 
             # if we only compute the Hessian information for a single batch data, we can re-use the gradients.
-            outputs = self.model(self.inputs)
-            loss = self.criterion(outputs, self.targets)
-            loss.backward(create_graph=True)
+            if self.model_name == 'WideResNet':
+                outputs = self.model(self.inputs)
+                loss = self.criterion(outputs, self.targets)
+                loss.mean().backward(create_graph=True)
+            elif self.model_name == 'AttentionGru':
+                outputs, _ = model(self.inputs)
+                loss = self.criterion(outputs, self.targets)
+                loss.mean().backward(create_graph=True)
+            elif self.model_name == 'GCN':
+                input_x = self.inputs.x.to(self.device)
+                input_edge_index = self.inputs.edge_index.to(self.device)
+                input_batch = self.inputs.batch.to(self.device)
+                targets = self.inputs.y.to(self.device)
+
+                outputs = model(input_x, input_edge_index, input_batch)
+                loss = self.criterion(outputs, targets)
+                loss.mean().backward(create_graph=True)
+
 
         # this step is used to extract the parameters from the model
         params, gradsH = get_params_grad(self.model)
@@ -218,7 +234,8 @@ class hessian():
             beta_list = []
             ############### Lanczos
             for i in range(iter):
-                print(f'Iter {i}')
+                if i % 1 == 0:
+                    print(f'Iter {i}')
                 self.model.zero_grad()
                 w_prime = [torch.zeros(p.size()).to(device) for p in self.params]
                 if i == 0:
