@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Import the model
     model = WideResNet(args.depth, args.width_factor, args.dropout, in_channels=3, labels=10).to(device)
         
-    log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho)
+    log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho, test_case='cifar')
     
     # select the optimizer
     if args.optimizer == 'SGD':
