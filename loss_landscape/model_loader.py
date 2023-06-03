@@ -2,12 +2,14 @@ import os
 import torch, torchvision
 
 import sys; sys.path.append("..")
-from models import wide_res_net, attention_gru, gcn
+from models import wide_res_net, gcn
+from models.transformer.model.transformer import Transformer 
+
 
 # map between model name and function
 models = {
     'WideResNet'                  : wide_res_net.WideResNet, 
-    'AttentionGru'                : attention_gru.AttentionGru,
+    'Transformer'                 : Transformer,
     'GCN'                         : gcn.GCN,
 }
 
@@ -31,10 +33,9 @@ def load(dataset_name, model_name, model_file, args, DATASET = None, data_parall
         if data_parallel: # convert the model back to the single GPU version
             net = net.module
             
-    if dataset_name == 'imdb' and model_name == 'AttentionGru':
-        ATTN_FLAG = True
-        vocab_dim = len(DATASET.TEXT.vocab)
-        net = models[model_name](vocab_dim, embedding_dim=args.embedding_dim, hidden_dim=args.hidden_dim, output_dim=args.output_dim, num_layers=args.num_layers, d_rate=args.dropout)
+    if dataset_name == 'mitbih' and model_name == 'Transformer':
+        net = Transformer(d_model=args.d_model, n_head=args.n_head, max_len=args.max_len, seq_len=args.sequence_len, ffn_hidden=args.ffn_hidden, n_layers=args.n_layer, drop_prob=args.dropout, details=False, device=device).to(device=device)
+        
         if data_parallel: # the model is saved in data paralle mode
             net = torch.nn.DataParallel(net)
 

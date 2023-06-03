@@ -23,12 +23,13 @@ import plot_1D
 import model_loader
 import scheduler
 import mpi4pytorch as mpi
+import random
 
 from evaluate_loss import *
 
 import sys; sys.path.append("..")
 from DatasetClass.cifar import Cifar
-from DatasetClass.imdb import Imdb
+from DatasetClass.mitbih import MitBih
 from DatasetClass.TUD import GraphDataset
 
 from models.smooth_cross_entropy import smooth_crossentropy,mean_smooth_crossentropy
@@ -132,8 +133,8 @@ def crunch(model_name, surf_file, net, w, s, d, dataloader, loss_key, acc_key, c
         loss_start = time.time()
         if model_name == 'WideResNet':
             loss, acc = evaluation.eval_loss(net, criterion, dataloader, args.loss_name, args.cuda)
-        elif model_name == 'AttentionGru':
-            loss, acc = eval_loss_attgru(net,criterion,dataloader,args.percentage)
+        elif model_name == 'Transformer':
+            loss, acc = eval_loss_transformer(net,criterion,dataloader,args.percentage)
         elif model_name == 'GCN':
             loss, acc = eval_loss_gcn(net,criterion,dataloader)
         loss_compute_time = time.time() - loss_start
@@ -182,7 +183,7 @@ if __name__ == '__main__':
     # parser.add_argument('--batch_size', default=128, type=int, help='minibatch size')
 
     # data parameters
-    parser.add_argument('--dataset', default='cifar10', help='cifar10 | imdb | Mutagenicity')
+    parser.add_argument('--dataset', default='cifar10', help='cifar10 | mitbih | Mutagenicity')
     parser.add_argument('--datapath', default='cifar10/data', metavar='DIR', help='path to the dataset')
     parser.add_argument('--raw_data', action='store_true', default=False, help='no data preprocessing')
     parser.add_argument('--data_split', default=1, type=int, help='the number of splits for the dataloader')
@@ -191,7 +192,7 @@ if __name__ == '__main__':
     parser.add_argument('--testloader', default='', help='path to the testloader with random labels')
 
     # model parameters
-    parser.add_argument('--model', default='WideResNet', help='model name: WideResNet | AttentionGru | GCN')
+    parser.add_argument('--model', default='WideResNet', help='model name: WideResNet | Transformer | GCN')
     parser.add_argument('--model_folder', default='', help='the common folder that contains model_file and model_file2')
     parser.add_argument('--model_file', default='', help='path to the trained model file')
     parser.add_argument('--model_file2', default='', help='use (model_file2 - model_file) as the xdirection')
@@ -235,15 +236,26 @@ if __name__ == '__main__':
     parser.add_argument("--train_rate", default=70, type=int, help="Train rate, [0,100]")
     parser.add_argument("--hidden-channels", default=64, type=int, help="Hidden channels of convolutional layers")
     
-    # Attention GRU model parameters
-    parser.add_argument("--embedding_dim", default=300, type=int, help="embedding dimension of the vocabulary")
-    parser.add_argument("--hidden_dim", default=32, type=int, help="hidden dimension of the GRU layer")
-    parser.add_argument("--output_dim", default=2, type=int, help="output dimension (number of classes)")
-    parser.add_argument("--num_layers", default=2, type=int, help="number of layers of the GRU layer")
+    # Transformer model parameters
+    parser.add_argument("--max_len", default=5000, type=int, help="Max time series sequence length")
+    parser.add_argument("--sequence_len", default=187, type=int, help="Sequence length of time series")
+    parser.add_argument("--n_head", default=2, type=int, help="Number of attention head")
+    parser.add_argument("--n_layer", default=1, type=int, help="Number of encoder layers")
+    parser.add_argument("--d_model", default=200, type=int, help="Dimension (for positional embedding)")
+    parser.add_argument("--ffn_hidden", default=128, type=int, help="Size of hidden layer before classification")
+
 
     args = parser.parse_args()
 
-    torch.manual_seed(123)
+    random.seed(42)
+    torch.manual_seed(42)
+    torch.cuda.manual_seed(42)
+    torch.cuda.manual_seed_all(42)
+
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.deterministic = False    
+    
     #--------------------------------------------------------------------------
     # Environment setup
     #--------------------------------------------------------------------------
@@ -284,14 +296,14 @@ if __name__ == '__main__':
             dataset = Cifar(args.percentage, args.batch_size, args.threads)
             trainloader, testloader = dataset.train, dataset.test
         
-        elif args.dataset == 'imdb':
+        elif args.dataset == 'mitbih':
             try:
                 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
             except:
                 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-            dataset = Imdb(args.percentage, args.batch_size, args.threads, device)
-            trainloader = dataset.train_iterator
+            dataset = MitBih(args.batch_size, args.threads)
+            trainloader = dataset.train
 
         elif args.dataset == 'Mutagenicity':
             dataset = GraphDataset(args.dataset, args.train_rate, args.batch_size)

@@ -23,10 +23,14 @@ class Cifar:
             transforms.ToTensor(),
             transforms.Normalize(mean, std)
         ])
-
-        self.train_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=True, transform=train_transform)
-        self.test_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=False, transform=test_transform)
         
+        try:
+            self.train_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=True, transform=train_transform)
+            self.test_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=False, transform=test_transform)
+        except:
+            self.train_set = Cifar10Subset(percentage=percentage, root='../DatasetClass/cifar', train=True, transform=train_transform)
+            self.test_set = Cifar10Subset(percentage=percentage, root='../DatasetClass/cifar', train=False, transform=test_transform)
+            
         self.train = torch.utils.data.DataLoader(self.train_set, batch_size=batch_size, shuffle=True, num_workers=threads)
         self.test = torch.utils.data.DataLoader(self.test_set, batch_size=batch_size, shuffle=False, num_workers=threads)
 

@@ -23,10 +23,17 @@ class MitBihSubset(Dataset):
     def __init__(self, train=True):
         
         if train==True:
-            mitbih_dataset = pd.read_csv('DatasetClass/mitbih/mitbih_train.csv')
+            try:
+                mitbih_dataset = pd.read_csv('DatasetClass/mitbih/mitbih_train.csv')
+            except:
+                mitbih_dataset = pd.read_csv('../DatasetClass/mitbih/mitbih_train.csv')
             start_point_to_balance = 71829
+        
         else:
-            mitbih_dataset = pd.read_csv('DatasetClass/mitbih/mitbih_test.csv')
+            try:
+                mitbih_dataset = pd.read_csv('DatasetClass/mitbih/mitbih_test.csv')
+            except:
+                mitbih_dataset = pd.read_csv('../DatasetClass/mitbih/mitbih_test.csv')
             start_point_to_balance = 17956
         
         x = mitbih_dataset.iloc[start_point_to_balance:,:-1].values

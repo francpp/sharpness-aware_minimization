@@ -41,6 +41,12 @@ class hessian():
         data: a single batch of data, including inputs and its corresponding labels
         dataloader: the data loader including bunch of batches of data
         """
+        
+        # device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+        try:
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        except:
+            device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
         # make sure we either pass a single batch or a dataloader
         assert (data != None and dataloader == None) or (data == None and
@@ -74,17 +80,21 @@ class hessian():
                 outputs = self.model(self.inputs)
                 loss = self.criterion(outputs, self.targets)
                 loss.mean().backward(create_graph=True)
-            elif self.model_name == 'AttentionGru':
-                outputs, _ = model(self.inputs)
-                loss = self.criterion(outputs, self.targets)
+            
+            elif self.model_name == 'Transformer':
+                inputs = self.inputs.to(device=device, dtype=torch.float)
+                targets = self.targets.to(device=device, dtype=torch.long).squeeze(1)
+                outputs = self.model(inputs)
+                loss = self.criterion(outputs, targets)
                 loss.mean().backward(create_graph=True)
+            
             elif self.model_name == 'GCN':
                 input_x = self.inputs.x.to(self.device)
                 input_edge_index = self.inputs.edge_index.to(self.device)
                 input_batch = self.inputs.batch.to(self.device)
                 targets = self.inputs.y.to(self.device)
 
-                outputs = model(input_x, input_edge_index, input_batch)
+                outputs = self.model(input_x, input_edge_index, input_batch)
                 loss = self.criterion(outputs, targets)
                 loss.mean().backward(create_graph=True)
 
