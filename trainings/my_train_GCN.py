@@ -7,10 +7,10 @@ sys.path.append(".")
 from models.gcn import GCN
 from models.smooth_cross_entropy import smooth_crossentropy
 
-from utilities_cifar.log import Log
-from utilities_cifar.initialize import initialize
-from utilities_cifar.step_lr import StepLR
-from utilities_cifar.bypass_bn import enable_running_stats, disable_running_stats
+from utilities.log import Log
+from utilities.initialize import initialize
+from utilities.step_lr import StepLR
+from utilities.bypass_bn import enable_running_stats, disable_running_stats
 from DatasetClass.TUD import GraphDataset
 
 from sam import SAM
