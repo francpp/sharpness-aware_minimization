@@ -18,15 +18,12 @@ from sam import SAM
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--adaptive", default=False, type=bool, help="True if you want to use the Adaptive SAM.")
+    parser.add_argument("--adaptive", default=True, type=bool, help="True if you want to use the Adaptive SAM.")
     parser.add_argument("--batch_size", default=64, type=int, help="Batch size used in the training and validation loop.")
-    parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
-    parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
-    parser.add_argument("--epochs", default=50, type=int, help="Total number of epochs.")
+    parser.add_argument("--epochs", default=200, type=int, help="Total number of epochs.")
     parser.add_argument("--label_smoothing", default=0.1, type=float, help="Use 0.0 for no label smoothing.")
     parser.add_argument("--learning_rate", default=0.01, type=float, help="Base learning rate at the start of the training.")
-    parser.add_argument("--momentum", default=0.9, type=float, help="SGD Momentum.")
-    parser.add_argument("--rho", default=0.3, type=int, help="Rho parameter for SAM.")
+    parser.add_argument("--rho", default=0.3, type=float, help="Rho parameter for SAM.")
     parser.add_argument("--weight_decay", default=0.0005, type=float, help="L2 weight decay.")
     parser.add_argument("--optimizer", default='ADAM', type=str, help="ADAM or SAM")
     parser.add_argument("--train_rate", default=70, type=int, help="Train rate, [0,100]")
@@ -40,8 +37,7 @@ if __name__ == "__main__":
     #################################### Import the dataset ##########################################
     name='Mutagenicity'
     Graphs = GraphDataset(name, args.train_rate, args.batch_size)
-    print(len(Graphs))
-    Graphs.GlobalStats()
+    Graphs.GlobalStats(freq=False)
     Graphs.LocalStats()
     
     ########################### Import the model ####################################################
