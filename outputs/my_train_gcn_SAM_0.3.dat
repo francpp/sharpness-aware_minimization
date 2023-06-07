@@ -1,4 +1,0 @@
-{"step_type":"train","loss":0.4021897707,"accuracy":0.5311367381,"epoch":0}
-{"step_type":"test","loss":0.3615949348,"accuracy":0.5752688172,"epoch":0}
-{"step_type":"train","loss":0.3654460473,"accuracy":0.5443163097,"epoch":1}
-{"step_type":"test","loss":0.3618898824,"accuracy":0.5752688172,"epoch":0}
