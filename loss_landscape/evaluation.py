@@ -26,16 +26,15 @@ def eval_loss(net, criterion, loader, loss_name, use_cuda=False):
     total = 0 # number of samples
     num_batch = len(loader)
 
-    if use_cuda:
-        net.cuda()
-    net.eval()
-    
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
     elif torch.backends.mps.is_available():
         device = torch.device("mps")
     else:
         device = torch.device("cpu")
+        
+    net.to(device)
+    net.eval()
 
     with torch.no_grad():
         if loss_name == 'crossentropy' or loss_name == 'smooth_crossentropy':

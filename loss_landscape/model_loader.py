@@ -14,8 +14,15 @@ models = {
 }
 
 def load(dataset_name, model_name, model_file, args, DATASET = None, data_parallel=False):
-    #device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda:0")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
+        
+    net.to(device)
+    net.eval()
     
     if dataset_name == 'cifar10' and model_name == 'WideResNet':
         net = models[model_name](args.depth, args.width_factor, args.dropout, in_channels=3, labels=10)
