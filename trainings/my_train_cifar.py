@@ -20,9 +20,9 @@ from sam import SAM
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--adaptive", default=False, type=bool, help="True if you want to use the Adaptive SAM.")
+    parser.add_argument("--adaptive", default=True, type=bool, help="True if you want to use the Adaptive SAM.")
     parser.add_argument("--batch_size", default=128, type=int, help="Batch size used in the training and validation loop.")
-    parser.add_argument("--depth", default=8, type=int, help="Number of layers.")
+    parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
     parser.add_argument("--epochs", default=50, type=int, help="Total number of epochs.")
     parser.add_argument("--label_smoothing", default=0.1, type=float, help="Use 0.0 for no label smoothing.")
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument("--threads", default=2, type=int, help="Number of CPU threads for dataloaders.")
     parser.add_argument("--rho", default=1, type=float, help="Rho parameter for SAM.")
     parser.add_argument("--weight_decay", default=0.0005, type=float, help="L2 weight decay.")
-    parser.add_argument("--width_factor", default=2, type=int, help="How many times wider compared to normal ResNet.")
+    parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")
     parser.add_argument("--percentage", default=0.05, type=float, help="Percentage to extract from the Cifar Dataset")
     parser.add_argument("--optimizer", default='SGD', type=str, help="SGD or SAM")
     args = parser.parse_args()

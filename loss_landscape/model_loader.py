@@ -20,9 +20,6 @@ def load(dataset_name, model_name, model_file, args, DATASET = None, data_parall
         device = torch.device("mps")
     else:
         device = torch.device("cpu")
-        
-    net.to(device)
-    net.eval()
     
     if dataset_name == 'cifar10' and model_name == 'WideResNet':
         net = models[model_name](args.depth, args.width_factor, args.dropout, in_channels=3, labels=10)
