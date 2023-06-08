@@ -4,7 +4,7 @@ import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset
 from random import randint
-
+import os
 from utilities.cutout import Cutout
 
 class Cifar:
@@ -24,12 +24,14 @@ class Cifar:
             transforms.Normalize(mean, std)
         ])
         
-        try:
-            self.train_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=True, transform=train_transform)
-            self.test_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=False, transform=test_transform)
-        except:
+        cur_dir = os.getcwdb()
+        last_dir = os.path.basename(os.path.normpath(cur_dir))
+        if last_dir == b'loss_landscape':
             self.train_set = Cifar10Subset(percentage=percentage, root='../DatasetClass/cifar', train=True, transform=train_transform)
             self.test_set = Cifar10Subset(percentage=percentage, root='../DatasetClass/cifar', train=False, transform=test_transform)
+        else:
+            self.train_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=True, transform=train_transform)
+            self.test_set = Cifar10Subset(percentage=percentage, root='./DatasetClass/cifar', train=False, transform=test_transform)
             
         self.train = torch.utils.data.DataLoader(self.train_set, batch_size=batch_size, shuffle=True, num_workers=threads)
         self.test = torch.utils.data.DataLoader(self.test_set, batch_size=batch_size, shuffle=False, num_workers=threads)

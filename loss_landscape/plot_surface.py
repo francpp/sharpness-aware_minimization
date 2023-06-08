@@ -223,14 +223,14 @@ if __name__ == '__main__':
     parser.add_argument('--plot', action='store_true', default=False, help='plot figures after computation')
     
     # dataset loader parameters!!
-    parser.add_argument("--percentage", default=0.3, type=float, help="Percentage to extract from the Cifar Dataset")
+    parser.add_argument("--percentage", default=1, type=float, help="Percentage to extract from the Cifar Dataset")
     parser.add_argument("--batch_size", default=128, type=int, help="Batch size used in the training and validation loop.")
     parser.add_argument("--threads", default=2, type=int, help="Number of CPU threads for dataloaders.")
     
     # Cifar10 model parameters
-    parser.add_argument("--depth", default=8, type=int, help="Number of layers.")
+    parser.add_argument("--depth", default=16, type=int, help="Number of layers.")
     parser.add_argument("--dropout", default=0.0, type=float, help="Dropout rate.")
-    parser.add_argument("--width_factor", default=2, type=int, help="How many times wider compared to normal ResNet.")
+    parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")
     
     # GCN model parameters
     parser.add_argument("--train_rate", default=70, type=int, help="Train rate, [0,100]")
@@ -266,14 +266,21 @@ if __name__ == '__main__':
         comm, rank, nproc = None, 0, 1
 
     # in case of multiple GPUs per node, set the GPU to use for each rank
-    if args.cuda:
-        if not torch.cuda.is_available():
-            raise Exception('User selected cuda option, but cuda is not available on this machine')
-        gpu_count = torch.cuda.device_count()
-        torch.cuda.set_device(rank % gpu_count)
-        print('Rank %d use GPU %d of %d GPUs on %s' %
-              (rank, torch.cuda.current_device(), gpu_count, socket.gethostname()))
-
+    # if args.cuda:
+    #     if not torch.cuda.is_available():
+    #         raise Exception('User selected cuda option, but cuda is not available on this machine')
+    #     gpu_count = torch.cuda.device_count()
+    #     torch.cuda.set_device(rank % gpu_count)
+    #     print('Rank %d use GPU %d of %d GPUs on %s' %
+    #           (rank, torch.cuda.current_device(), gpu_count, socket.gethostname()))
+    
+    if torch.cuda.is_available():
+        device = torch.device("cuda:0")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
+        
     #--------------------------------------------------------------------------
     # Check plotting resolution
     #--------------------------------------------------------------------------
@@ -297,11 +304,6 @@ if __name__ == '__main__':
             trainloader, testloader = dataset.train, dataset.test
         
         elif args.dataset == 'mitbih':
-            try:
-                device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-            except:
-                device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
             dataset = MitBih(args.batch_size, args.threads)
             trainloader = dataset.train
 

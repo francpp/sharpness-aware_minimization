@@ -25,7 +25,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 
-def get_esd_plot(eigenvalues, weights, name='ex.png'):
+def get_esd_plot(eigenvalues, weights, name='ex.png', vmin = None, vmax = None):
     plt.figure()
     density, grids = density_generate(eigenvalues, weights)
     plt.semilogy(grids, density + 1.0e-7)
@@ -34,7 +34,11 @@ def get_esd_plot(eigenvalues, weights, name='ex.png'):
     plt.title(f'Min eig={np.min(np.abs(eigenvalues)):.3e}, Max eig={np.max(np.abs(eigenvalues)):.2f}')
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
-    plt.axis([np.min(eigenvalues) - 1, np.max(eigenvalues)+1, None, None])
+    if vmin == None:
+        vmin = np.min(eigenvalues) - 1
+    if vmax == None:
+        vmax = np.max(eigenvalues)+1
+    plt.axis([vmin, vmax, None, None])
     plt.tight_layout()
     plt.savefig(name)
 

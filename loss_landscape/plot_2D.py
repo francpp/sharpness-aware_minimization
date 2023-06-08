@@ -41,7 +41,7 @@ def plot_2d_contour(surf_file, surf_name='train_loss', vmin=0.1, vmax=10, vlevel
     # print("loading surface file: " + surf_file)
     print('len(xcoordinates): %d   len(ycoordinates): %d' % (len(x), len(y)))
     # print('max(%s) = %f \t min(%s) = %f' % (surf_name, np.max(Z), surf_name, np.min(Z)))
-    print(Z)
+    # print(Z)
 
     if (len(x) <= 1 or len(y) <= 1):
         print('The length of coordinates is not enough for plotting contours')

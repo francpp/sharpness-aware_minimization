@@ -43,11 +43,15 @@ class hessian():
         """
         
         # device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-        try:
-            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        except:
-            device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-
+        if torch.cuda.is_available():
+            device = torch.device("cuda:0")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
+        
+        self.device = device
+        
         # make sure we either pass a single batch or a dataloader
         assert (data != None and dataloader == None) or (data == None and
                                                          dataloader != None)
@@ -62,11 +66,6 @@ class hessian():
         else:
             self.data = dataloader
             self.full_dataset = True
-
-        if cuda:
-            self.device = 'cuda'
-        else:
-            self.device = 'cpu'
 
         # pre-processing for single batch case to simplify the computation.
         if not self.full_dataset:
@@ -244,7 +243,7 @@ class hessian():
             beta_list = []
             ############### Lanczos
             for i in range(iter):
-                if i % 1 == 0:
+                if i % 10 == 0:
                     print(f'Iter {i}')
                 self.model.zero_grad()
                 w_prime = [torch.zeros(p.size()).to(device) for p in self.params]
