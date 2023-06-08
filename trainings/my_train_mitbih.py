@@ -1,5 +1,6 @@
 import argparse
 import torch
+from torchinfo import summary
 import numpy as np 
 
 import sys; 
@@ -80,6 +81,7 @@ if __name__ == "__main__":
 
     # Import the model
     model = Transformer(d_model=args.d_model, n_head=args.n_head, max_len=args.max_len, seq_len=args.sequence_len, ffn_hidden=args.ffn_hidden, n_layers=args.n_layer, drop_prob=args.dropout, details=False, device=device).to(device=device)
+    summary(model)
     
     log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho, test_case='mitbih')
     
