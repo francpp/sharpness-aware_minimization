@@ -243,7 +243,7 @@ class hessian():
             beta_list = []
             ############### Lanczos
             for i in range(iter):
-                if i % 10 == 0:
+                if i % 1 == 0:
                     print(f'Iter {i}')
                 self.model.zero_grad()
                 w_prime = [torch.zeros(p.size()).to(device) for p in self.params]
