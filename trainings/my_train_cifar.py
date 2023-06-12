@@ -1,5 +1,6 @@
 import argparse
 import torch
+from torchinfo import summary
 
 import sys; 
 sys.path.append(".")
@@ -32,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument("--rho", default=1, type=float, help="Rho parameter for SAM.")
     parser.add_argument("--weight_decay", default=0.0005, type=float, help="L2 weight decay.")
     parser.add_argument("--width_factor", default=8, type=int, help="How many times wider compared to normal ResNet.")
-    parser.add_argument("--percentage", default=0.05, type=float, help="Percentage to extract from the Cifar Dataset")
+    parser.add_argument("--percentage", default=1, type=float, help="Percentage to extract from the Cifar Dataset")
     parser.add_argument("--optimizer", default='SGD', type=str, help="SGD or SAM")
     args = parser.parse_args()
 
@@ -47,6 +48,7 @@ if __name__ == "__main__":
 
     # Import the model
     model = WideResNet(args.depth, args.width_factor, args.dropout, in_channels=3, labels=10).to(device)
+    summary(model)
         
     log = Log(log_each=10, optimizer=args.optimizer, rho=args.rho, test_case='cifar')
     
