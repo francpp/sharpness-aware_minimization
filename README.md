@@ -31,10 +31,12 @@ To generate the surface plots and the eigenvalues plots, follow the instruction 
 ## Documentation
 
 #### `sam.py`
+
 This file contians the implementation of the SAM Optimizer
 
 <br>
 #### `Loss_plots.ipynb`
+
 This notebook contains the instruction to analyze the loss landscape and the eigenvalues of the minima.
 
 <br>
@@ -48,6 +50,7 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 
 <br>
 #### `Eigenvalues`
+
 | **File**    | **Description** |
 | :-------------- | :-------------- |
 | `<model_name>_<optimizer>_eigen.npy` | ... |
@@ -55,6 +58,7 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 
 <br>
 #### `loss_lanscape`
+
 | **File**    | **Description** |
 | :-------------- | :-------------- |
 | `<model_name>_<optimizer>_eigen.npy` | ... |
@@ -62,6 +66,7 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 
 <br>
 #### `models`
+
 | **File**    | **Description** |
 | :-------------- | :-------------- |
 | `transformer/` | This folder contains all the blocks of the Transformer Model |
@@ -71,27 +76,33 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 
 <br>
 #### `outputs`
+
 | `my_train_<model_name>_<optimizer>_<rho>.dat` | This file contains the history of the loss and the accuracy |
 
 <br>
 #### `plots`
+
 | `eig_<model_name>_<optimizer>.png` | This figure contains the plot of the eigenvalues |
 | `/model_<model_name>_<optimizer>_rho<rho>......h5_2d<figure>.png
 .png` | This figures contain the different plots of the loss landscape |
 
 <br>
 #### `to_plot`
+
 This folder contains the trained models and the .h5 files used to plot the loss landscape
 
 <br>
 #### `trainings`
+
 | `my_train_<model_name>.py` | This script trains the model on the specific dataset using either SGD/ADAM or SAM optimizer, with progress logging and model saving |
 
 <br>
 #### `utilities`
+
 This folder contains the class called `Log` that handles progress logging during model training. The class tracks metrics such as loss and accuracy, displays progress during training, and saves the results to a log file.
 
 ## References
+
 Some code snippets used in the project have been sourced and adapted from the following repositories: 
 
 1. Repository name: [SAM Optimizer](https://github.com/davda54/sam/)
