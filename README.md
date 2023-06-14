@@ -19,53 +19,77 @@ python .\trainings\my_train_<model_name>.py --optimizer=<opt> --rho=<rho>
 Please note that you can also modify other default parameters set in the parser of each specific model. In order to customize these parameters during training, you can add additional arguments to the command line.
 
 <br>
-To build the file for evaluating the loss landscape, use the following command from the terminal, assuming you are inside the ./loss_landscape folder:
+To build the file for evaluating the loss landscape, use the following command from the terminal (see `Loss_plots.ipynb` for further informations), assuming you are inside the `./loss_landscape` folder:
 
 ```
-python plot_surface.py --model Transformer --dataset mitbih --x=-1:1:20 --y=-1:1:20 --model_file ../to_plot/model_<model_name>_<optimizer>_rho<rho>.pt --
-dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --batch_size=128 --loss_name smooth_crossentropy
+python plot_surface.py --model <model_name> --dataset <dataset_name> --x=-1:1:20 --y=-1:1:20 --model_file ../to_plot/model_<model_name>_<optimizer>_rho<rho>.pt --
+dir_type weights --xnorm filter --xignore biasbn --ynorm filter --yignore biasbn --plot --batch_size=<batch_size> --loss_name smooth_crossentropy
 ```
 
 To generate the surface plots and the eigenvalues plots, follow the instruction of the notebook `Loss_plots.ipynb`.
 
 ## Documentation
 
+#### `sam.py`
+This file contians the implementation of the SAM Optimizer
+
+<br>
+#### `Loss_plots.ipynb`
+This notebook contains the instruction to analyze the loss landscape and the eigenvalues of the minima.
+
+<br>
 #### `DatasetClass`
 
 | **File**    | **Description** |
 | :-------------- | :-------------- |
-| `cifar.py` | This file implements the CIFAR dataset class and a subset class for CIFAR-10, providing data loading and preprocessing functionality for the CIFAR-10 dataset. |
-| `mitbih.py` | This file implements the MitBih dataset class and subset class for ECG signal classification. |
-| `TUD.py` | This file implements a GraphDataset class for handling graph datasets from TUDataset using PyTorch Geometric. |
+| `cifar.py` | This file implements the CIFAR dataset class and a subset class for CIFAR-10, providing data loading and preprocessing functionality for the CIFAR-10 dataset |
+| `mitbih.py` | This file implements the MitBih dataset class and subset class for ECG signal classification |
+| `TUD.py` | This file implements a GraphDataset class for handling graph datasets from TUDataset using PyTorch Geometric |
 
 <br>
 #### `Eigenvalues`
 | **File**    | **Description** |
 | :-------------- | :-------------- |
-| `<model_name>_<optimizer>_eigen.npy` | |
-| `<model_name>_<optimizer>_weight.npy` |  |
+| `<model_name>_<optimizer>_eigen.npy` | ... |
+| `<model_name>_<optimizer>_weight.npy` | ...  |
 
 <br>
 #### `loss_lanscape`
+| **File**    | **Description** |
+| :-------------- | :-------------- |
+| `<model_name>_<optimizer>_eigen.npy` | ... |
+| `<model_name>_<optimizer>_weight.npy` | ... |
 
 <br>
 #### `models`
+| **File**    | **Description** |
+| :-------------- | :-------------- |
+| `transformer/` | This folder contains all the blocks of the Transformer Model |
+| `gnc.py` | This file implements the Graph Convolutional Network Model |
+| `wide_res_net.py` | This file implements the Wide Res Net Model |
+| `smooth_crossentropy.py` | This file implements the smooth crossentropy loss |
 
 <br>
 #### `outputs`
+| `my_train_<model_name>_<optimizer>_<rho>.dat` | This file contains the history of the loss and the accuracy |
 
 <br>
 #### `plots`
+| `eig_<model_name>_<optimizer>.png` | This figure contains the plot of the eigenvalues |
+| `/model_<model_name>_<optimizer>_rho<rho>......h5_2d<figure>.png
+.png` | This figures contain the different plots of the loss landscape |
 
 <br>
 #### `to_plot`
+This folder contains the trained models and the .h5 files used to plot the loss landscape
 
 <br>
 #### `trainings`
+| `my_train_<model_name>.py` | This script trains the model on the specific dataset using either SGD/ADAM or SAM optimizer, with progress logging and model saving |
 
 <br>
 #### `utilities`
-
+This folder contains the class called `Log` that handles progress logging during model training. The class tracks metrics such as loss and accuracy, displays progress during training, and saves the results to a log file.
 
 ## References
 Some code snippets used in the project have been sourced and adapted from the following repositories: 
@@ -76,8 +100,8 @@ Some code snippets used in the project have been sourced and adapted from the fo
 2. Repository name: [AttentionModel]()
    This repository contains a PyTorch implementation of the Attention Model.
 
-3. Repository name: [GraphConvolutionalNetwork]()
-   The Graph Convolutional Network repository is a PyTorch implementation of a graph convolutional neural network model.
+3. Repository name: [GraphConvolutionalNetwork](https://colab.research.google.com/drive/1I8a0DfQ3fI7Njc62__mVXUlcAleUclnb?usp=sharing)
+   The Graph Convolutional Network notebook contains a PyTorch implementation of a Graph Convolutional Network model.
 
 4. Repository name: [LossLandscape]()
    ...
