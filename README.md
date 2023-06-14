@@ -35,11 +35,13 @@ To generate the surface plots and the eigenvalues plots, follow the instruction 
 This file contians the implementation of the SAM Optimizer
 
 <br>
+
 #### `Loss_plots.ipynb`
 
 This notebook contains the instruction to analyze the loss landscape and the eigenvalues of the minima.
 
 <br>
+
 #### `DatasetClass`
 
 | **File**    | **Description** |
@@ -49,6 +51,7 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `TUD.py` | This file implements a GraphDataset class for handling graph datasets from TUDataset using PyTorch Geometric |
 
 <br>
+
 #### `Eigenvalues`
 
 | **File**    | **Description** |
@@ -57,6 +60,7 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `<model_name>_<optimizer>_weight.npy` | ...  |
 
 <br>
+
 #### `loss_lanscape`
 
 | **File**    | **Description** |
@@ -65,6 +69,7 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `<model_name>_<optimizer>_weight.npy` | ... |
 
 <br>
+
 #### `models`
 
 | **File**    | **Description** |
@@ -75,11 +80,13 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `smooth_crossentropy.py` | This file implements the smooth crossentropy loss |
 
 <br>
+
 #### `outputs`
 
 | `my_train_<model_name>_<optimizer>_<rho>.dat` | This file contains the history of the loss and the accuracy |
 
 <br>
+
 #### `plots`
 
 | `eig_<model_name>_<optimizer>.png` | This figure contains the plot of the eigenvalues |
@@ -87,16 +94,19 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 .png` | This figures contain the different plots of the loss landscape |
 
 <br>
+
 #### `to_plot`
 
 This folder contains the trained models and the .h5 files used to plot the loss landscape
 
 <br>
+
 #### `trainings`
 
 | `my_train_<model_name>.py` | This script trains the model on the specific dataset using either SGD/ADAM or SAM optimizer, with progress logging and model saving |
 
 <br>
+
 #### `utilities`
 
 This folder contains the class called `Log` that handles progress logging during model training. The class tracks metrics such as loss and accuracy, displays progress during training, and saves the results to a log file.
@@ -105,16 +115,24 @@ This folder contains the class called `Log` that handles progress logging during
 
 Some code snippets used in the project have been sourced and adapted from the following repositories: 
 
-1. Repository name: [SAM Optimizer](https://github.com/davda54/sam/)
+1. [SAM Optimizer](https://github.com/davda54/sam/):
    This repository provides the implementation of the SAM Optimizer and WideResNet model in PyTorch.
 
-2. Repository name: [AttentionModel]()
+2. [AttentionModel]():
    This repository contains a PyTorch implementation of the Attention Model.
 
-3. Repository name: [GraphConvolutionalNetwork](https://colab.research.google.com/drive/1I8a0DfQ3fI7Njc62__mVXUlcAleUclnb?usp=sharing)
+3. [GraphConvolutionalNetwork](https://colab.research.google.com/drive/1I8a0DfQ3fI7Njc62__mVXUlcAleUclnb?usp=sharing):
    The Graph Convolutional Network notebook contains a PyTorch implementation of a Graph Convolutional Network model.
 
-4. Repository name: [LossLandscape]()
+4. [LossLandscape]():
    ...
 
 The code from these repositories has been used as a reference and modified to suit the requirements of the 'Sharpness Aware Minimization' project in the Optimization for Machine Learning course.
+
+### Datasets
+
+The datasets are sourced from the following:
+
+1. [Cifar](): Dataset for WideResNet model
+2. [TUDataset](https://chrsmrrs.github.io/datasets/docs/datasets/): Dataset for GCN model
+3. [mitbih](): Dataset for Attention model
