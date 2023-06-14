@@ -19,7 +19,6 @@ import evaluation
 import projection as proj
 import net_plotter
 import plot_2D
-import plot_1D
 import model_loader
 import scheduler
 import mpi4pytorch as mpi
