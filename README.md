@@ -3,8 +3,10 @@
 </p> 
 
 --------------
-This repository contains the code for the project of the Optimization for Machine Learning course. The project's name is **Sharpness Aware Minimization**, and it investigates the utilization of this new optimizer in three different classification models: WideResNet, AttentionModel, and GraphConvolutionalNetwork.
+This repository contains the code for the project of the Optimization for Machine Learning course. The project's name is **Sharpness Aware Minimization**, and it 
+investigates the utilization of this new optimizer in three different classification models: WideResNet, AttentionModel, and GraphConvolutionalNetwork.
 
+--------------
 <br>
 One of the major challenges in developing modern machine learning models, often over-parametrized, lies in studying their generalization capabilities. This refers to their ability to perform well on new data, thereby reducing the test loss of the model. Focusing solely on the training loss can lead to sub-optimal models with a high risk of overfitting. Inspired by the combined study of the loss landscape geometry and model generalization, we have exploited a new effective procedure to simultaneously minimize the value of the loss and its sharpness. This procedure, called Sharpness-Aware Minimization (SAM), seeks parameters that lie in the vicinity of uniformly low losses, leading to a min-max optimization problem that can be efficiently solved using the gradient algorithm.
 <br>
@@ -32,15 +34,11 @@ To generate the surface plots and the eigenvalues plots, follow the instruction 
 
 #### `sam.py`
 
-This file contians the implementation of the SAM Optimizer
-
-<br>
+This file contains the implementation of the SAM Optimizer
 
 #### `Loss_plots.ipynb`
 
 This notebook contains the instruction to analyze the loss landscape and the eigenvalues of the minima.
-
-<br>
 
 #### `DatasetClass`
 
@@ -50,16 +48,12 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `mitbih.py` | This file implements the MitBih dataset class and subset class for ECG signal classification |
 | `TUD.py` | This file implements a GraphDataset class for handling graph datasets from TUDataset using PyTorch Geometric |
 
-<br>
-
 #### `Eigenvalues`
 
 | **File**    | **Description** |
 | :-------------- | :-------------- |
 | `<model_name>_<optimizer>_eigen.npy` | ... |
 | `<model_name>_<optimizer>_weight.npy` | ...  |
-
-<br>
 
 #### `loss_lanscape`
 
@@ -68,8 +62,6 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `<model_name>_<optimizer>_eigen.npy` | ... |
 | `<model_name>_<optimizer>_weight.npy` | ... |
 
-<br>
-
 #### `models`
 
 | **File**    | **Description** |
@@ -77,35 +69,32 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `transformer/` | This folder contains all the blocks of the Transformer Model |
 | `gnc.py` | This file implements the Graph Convolutional Network Model |
 | `wide_res_net.py` | This file implements the Wide Res Net Model |
-| `smooth_crossentropy.py` | This file implements the smooth crossentropy loss |
-
-<br>
+| `smooth_crossentropy.py` | This file implements the smooth cross-entropy loss |
 
 #### `outputs`
 
+| **File**    | **Description** |
+| :-------------- | :-------------- |
 | `my_train_<model_name>_<optimizer>_<rho>.dat` | This file contains the history of the loss and the accuracy |
-
-<br>
 
 #### `plots`
 
+| **File**    | **Description** |
+| :-------------- | :-------------- |
 | `eig_<model_name>_<optimizer>.png` | This figure contains the plot of the eigenvalues |
 | `/model_<model_name>_<optimizer>_rho<rho>......h5_2d<figure>.png
 .png` | This figures contain the different plots of the loss landscape |
 
-<br>
 
 #### `to_plot`
 
 This folder contains the trained models and the .h5 files used to plot the loss landscape
 
-<br>
-
 #### `trainings`
 
+| **File**    | **Description** |
+| :-------------- | :-------------- |
 | `my_train_<model_name>.py` | This script trains the model on the specific dataset using either SGD/ADAM or SAM optimizer, with progress logging and model saving |
-
-<br>
 
 #### `utilities`
 
