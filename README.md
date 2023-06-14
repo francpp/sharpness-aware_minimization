@@ -7,9 +7,14 @@ This repository contains the code for the project of the Optimization for Machin
 investigates the utilization of this new optimizer in three different classification models: WideResNet, AttentionModel, and GraphConvolutionalNetwork.
 
 --------------
-<br>
 One of the major challenges in developing modern machine learning models, often over-parametrized, lies in studying their generalization capabilities. This refers to their ability to perform well on new data, thereby reducing the test loss of the model. Focusing solely on the training loss can lead to sub-optimal models with a high risk of overfitting. Inspired by the combined study of the loss landscape geometry and model generalization, we have exploited a new effective procedure to simultaneously minimize the value of the loss and its sharpness. This procedure, called Sharpness-Aware Minimization (SAM), seeks parameters that lie in the vicinity of uniformly low losses, leading to a min-max optimization problem that can be efficiently solved using the gradient algorithm.
 <br>
+
+## Team
+
+- Francesco Fainello: francesco.fainello@epfl.ch
+- Francesco Pettenon: francesco.pettenon@epfl.ch
+- Francesca Venturi: francesca.venturi@epfl.ch
 
 ## Usage
 To train the model, use the following command from the main folder (replace `<model_name>` with the specific model you want to train, such as 'cifar', 'mitbih', or 'GCN'):
@@ -82,9 +87,7 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | **File**    | **Description** |
 | :-------------- | :-------------- |
 | `eig_<model_name>_<optimizer>.png` | This figure contains the plot of the eigenvalues |
-| `/model_<model_name>_<optimizer>_rho<rho>......h5_2d<figure>.png
-.png` | This figures contain the different plots of the loss landscape |
-
+| `/model_<model_name>_<optimizer>_rho<rho>......h5_2d<figure>.png` | This figures contain the different plots of the loss landscape |
 
 #### `to_plot`
 
