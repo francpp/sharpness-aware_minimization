@@ -60,18 +60,23 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 | `<model_name>_<optimizer>_eigen.npy` | This file contains the eigenvalues for the plots of the Eigenvalue Spectral Density|
 | `<model_name>_<optimizer>_weight.npy` | This file contains the weights for the plots of the Eigenvalue Spectral Density|
 
-#### `loss_lanscape`
+#### `loss_landscape`
 
 This folder contains the code for visualization of the loss landscape, namely loss surface along random direction(s) near the optimal parameters.
 
 | **File**    | **Description** |
 | :-------------- | :-------------- |
-| `plot_surface.py` | Calculate the loss surface, save data in .h5 file|
-| `plot_2D.py` | 2D plotting funtions from .h5 files for loss landscape|
+| `plot_surface.py` | Calculate the loss surface, save data in .h5 file |
+| `plot_2D.py` | 2D plotting funtions from .h5 files for loss landscape |
 
-#### `loss_lanscape/my_pyhessian`
+#### `loss_landscape/my_pyhessian`
 
 This folder contains the code for computation of Hessian eigenvalues and Hessian Eigenvalues Spectral Density (ESD).
+
+| **File**    | **Description** |
+| :-------------- | :-------------- |
+| `hessian.py` | Compute hessian, eigenvalues, ESD|
+| `density_plot.py` | Plot ESD |
 
 #### `models`
 
