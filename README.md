@@ -57,15 +57,21 @@ This notebook contains the instruction to analyze the loss landscape and the eig
 
 | **File**    | **Description** |
 | :-------------- | :-------------- |
-| `<model_name>_<optimizer>_eigen.npy` | ... |
-| `<model_name>_<optimizer>_weight.npy` | ...  |
+| `<model_name>_<optimizer>_eigen.npy` | This file contains the eigenvalues for the plots of the Eigenvalue Spectral Density|
+| `<model_name>_<optimizer>_weight.npy` | This file contains the weights for the plots of the Eigenvalue Spectral Density|
 
 #### `loss_lanscape`
 
+This folder contains the code for visualization of the loss landscape, namely loss surface along random direction(s) near the optimal parameters.
+
 | **File**    | **Description** |
 | :-------------- | :-------------- |
-| `<model_name>_<optimizer>_eigen.npy` | ... |
-| `<model_name>_<optimizer>_weight.npy` | ... |
+| `plot_surface.py` | Calculate the loss surface, save data in .h5 file|
+| `plot_2D.py` | 2D plotting funtions from .h5 files for loss landscape|
+
+#### `loss_lanscape/my_pyhessian`
+
+This folder contains the code for computation of Hessian eigenvalues and Hessian Eigenvalues Spectral Density (ESD).
 
 #### `models`
 
@@ -116,8 +122,11 @@ Some code snippets used in the project have been sourced and adapted from the fo
 3. [GraphConvolutionalNetwork](https://colab.research.google.com/drive/1I8a0DfQ3fI7Njc62__mVXUlcAleUclnb?usp=sharing):
    The Graph Convolutional Network notebook contains a PyTorch implementation of a Graph Convolutional Network model.
 
-4. [LossLandscape]():
-   ...
+4. [LossLandscape](https://github.com/tomgoldstein/loss-landscape):
+   Given a network architecture and its pre-trained parameters, this tool calculates and visualizes the loss surface along random direction(s) near the optimal parameters.
+
+4. [PyHessian](https://github.com/amirgholami/PyHessian):
+   Pytorch library for Hessian based analysis of neural network models. The library enables computing the following metrics: top Hessian eigenvalues, the trace of the Hessian matrix, the full Hessian Eigenvalues Spectral Density (ESD).
 
 The code from these repositories has been used as a reference and modified to suit the requirements of the 'Sharpness Aware Minimization' project in the Optimization for Machine Learning course.
 
