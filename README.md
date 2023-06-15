@@ -121,7 +121,7 @@ Some code snippets used in the project have been sourced and adapted from the fo
 1. [SAM Optimizer](https://github.com/davda54/sam/):
    This repository provides the implementation of the SAM Optimizer and WideResNet model in PyTorch.
 
-2. [AttentionModel]():
+2. [AttentionModel](https://github.com/mselmangokmen/TimeSeriesProject):
    This repository contains a PyTorch implementation of the Attention Model.
 
 3. [GraphConvolutionalNetwork](https://colab.research.google.com/drive/1I8a0DfQ3fI7Njc62__mVXUlcAleUclnb?usp=sharing):
@@ -139,6 +139,6 @@ The code from these repositories has been used as a reference and modified to su
 
 The datasets are sourced from the following:
 
-1. [Cifar](): Dataset for WideResNet model
+1. [Cifar](https://www.cs.toronto.edu/~kriz/cifar.html): Dataset for WideResNet model
 2. [TUDataset](https://chrsmrrs.github.io/datasets/docs/datasets/): Dataset for GCN model
-3. [mitbih](): Dataset for Attention model
+3. [mitbih](https://www.kaggle.com/datasets/shayanfazeli/heartbeat?resource=download&select=mitbih_test.csv): Dataset for Attention model
