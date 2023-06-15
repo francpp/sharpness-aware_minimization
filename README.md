@@ -26,7 +26,7 @@ python .\trainings\my_train_<model_name>.py --optimizer=<opt> --rho=<rho>
 Please note that you can also modify other default parameters set in the parser of each specific model. In order to customize these parameters during training, you can add additional arguments to the command line.
 
 <br>
-To build the file for evaluating the loss landscape, use the following command from the terminal (see `Loss_plots.ipynb` for further information), assuming you are inside the `./loss_landscape` folder:
+To build the file for evaluating the loss landscape, use the following command from the terminal (see `Loss_plots.ipynb` for further information), assuming you are inside the `./loss_landscape` folder: 
 
 ```
 python plot_surface.py --model <model_name> --dataset <dataset_name> --x=-1:1:20 --y=-1:1:20 --model_file ../to_plot/model_<model_name>_<optimizer>_rho<rho>.pt --
